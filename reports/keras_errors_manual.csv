@@ -1,0 +1,15 @@
+text,label,pred
+"Kak, untuk packaging transparan isi 10 pcs harganya berapa? Tidak perlu paket hampers.",Ready Stock,Hampers
+"Aku mau nyiapin kado nikah buat Rani dan Fikri. Sajadahnya dua, masing-masing ditulis nama mereka pakai font yang elegan.",Custom Sajadah,Other
+"Sajadahnya sudah aku pilih yang warna sage, tinggal mau ditambah nama Alika. Penempatan tulisannya bisa di tengah bawah?",Custom Sajadah,Other
+"Sjd warna biru dongker, tulis 'Nadia' kecil aja di pojok kanan bawah. Kira-kira selesai sebelum Jumat?",Custom Sajadah,Ready Stock
+Boleh nggak sajadah souvenir dibuat dengan logo kantor dan slogan pendek? Totalnya sekitar 45 pcs.,Custom Sajadah,Custom Handuk
+"Aku order sajadah motif polos, tapi sekalian tambah tulisan 'Alya' pakai font script ya.",Custom Sajadah,Ready Stock
+"handuknya mau dikasih inisial FJ, 2 pcs aja ya min. warna hitam kalau ada.",Custom Handuk,Ready Stock
+Bisa buat bingkisan untuk bridesmaid yang isinya handuk dan pouch? Masing-masing dikemas terpisah.,Hampers,Ready Stock
+"Aku butuh hampers yang ada handuk bordir nama plus sabun dan pouch. Jadi satu paket, bukan item terpisah.",Hampers,Custom Handuk
+"Ada gift set untuk rekan kerja yang menggabungkan handuk, notes, dan pulpen? Minta opsi kemasan juga.",Hampers,Ready Stock
+"Terima kasih banyak, paketnya sudah sampai dan semuanya aman. Nanti saya order lagi.",Other,Custom Sajadah
+Bordir di handuk yang saya terima agak miring dan benangnya lepas. Bisa dibantu tindak lanjut?,Other,Custom Handuk
+"Paket hampers yang datang rusak di bagian box, padahal isi barangnya tidak pecah. Bagaimana solusinya?",Other,Hampers
+Saya menerima handuk dengan warna berbeda dari yang dipilih. Apakah bisa retur atau tukar barang?,Other,Ready Stock

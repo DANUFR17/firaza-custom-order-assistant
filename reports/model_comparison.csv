@@ -1,0 +1,5 @@
+model,val,test,manual
+TF-IDF + LogReg,0.9062,0.8051,0.9307
+CNN (ens. seed),0.9867,0.7896,0.858
+CNN + augmentasi (ens. seed),0.9539,0.7253,0.8992
+Ensemble (CNN 0.75 + LogReg 0.25),0.9867,0.7938,0.88

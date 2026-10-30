@@ -1,0 +1,23 @@
+# Lingkungan Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Rahasia (API key Gemini dll.) - JANGAN PERNAH di-commit
+.env
+*.key
+
+# Database lokal (dibuat ulang lewat: python src/database.py --seed)
+data/firaza.db
+
+# File sementara
+reports/dry_run/
+data/_dryrun_copy.csv
+*.log
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db

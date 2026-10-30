@@ -1,0 +1,4 @@
+text,label,pred,confidence
+min box kado doang jual ga?,Ready Stock,Other,0.42
+Handuk polosnya sudah saya beli di toko lain. Apakah di sini bisa jasa bordir inisial saja?,Custom Handuk,Other,0.493
+"Paket hampers yang datang kurang satu mug, padahal handuk dan kartu ucapannya lengkap. Bagaimana proses komplainnya?",Other,Hampers,0.858

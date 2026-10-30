@@ -1,0 +1,155 @@
+{
+  "selected": {
+    "arch": "cnn",
+    "seed": 42,
+    "selection": "val macro F1 (mean antar seed)"
+  },
+  "hyperparameters": {
+    "max_tokens": 4000,
+    "seq_len": 40,
+    "emb_dim": 64,
+    "batch_size": 32,
+    "optimizer": "Adam(1e-3)",
+    "early_stopping": "val_loss, patience 5"
+  },
+  "summary_mean_std_over_seeds": {
+    "cnn": {
+      "val": {
+        "mean": 0.9425,
+        "std": 0.0229
+      },
+      "test": {
+        "mean": 0.7946,
+        "std": 0.0277
+      },
+      "manual": {
+        "mean": 0.8626,
+        "std": 0.0037
+      }
+    },
+    "bilstm": {
+      "val": {
+        "mean": 0.8947,
+        "std": 0.0235
+      },
+      "test": {
+        "mean": 0.824,
+        "std": 0.0462
+      },
+      "manual": {
+        "mean": 0.8364,
+        "std": 0.0185
+      }
+    }
+  },
+  "selected_model_metrics": {
+    "val": {
+      "accuracy": 0.9731,
+      "macro_f1": 0.9714,
+      "per_class": {
+        "Ready Stock": {
+          "precision": 0.89,
+          "recall": 1.0,
+          "f1": 0.942,
+          "support": 89
+        },
+        "Custom Sajadah": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 92
+        },
+        "Custom Handuk": {
+          "precision": 0.989,
+          "recall": 1.0,
+          "f1": 0.995,
+          "support": 93
+        },
+        "Hampers": {
+          "precision": 1.0,
+          "recall": 0.989,
+          "f1": 0.995,
+          "support": 92
+        },
+        "Other": {
+          "precision": 1.0,
+          "recall": 0.863,
+          "f1": 0.926,
+          "support": 80
+        }
+      }
+    },
+    "test": {
+      "accuracy": 0.8363,
+      "macro_f1": 0.8333,
+      "per_class": {
+        "Ready Stock": {
+          "precision": 0.888,
+          "recall": 0.989,
+          "f1": 0.935,
+          "support": 88
+        },
+        "Custom Sajadah": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.857,
+          "support": 92
+        },
+        "Custom Handuk": {
+          "precision": 0.71,
+          "recall": 1.0,
+          "f1": 0.83,
+          "support": 93
+        },
+        "Hampers": {
+          "precision": 0.986,
+          "recall": 0.75,
+          "f1": 0.852,
+          "support": 92
+        },
+        "Other": {
+          "precision": 0.705,
+          "recall": 0.679,
+          "f1": 0.692,
+          "support": 81
+        }
+      }
+    },
+    "manual": {
+      "accuracy": 0.86,
+      "macro_f1": 0.8593,
+      "per_class": {
+        "Ready Stock": {
+          "precision": 0.76,
+          "recall": 0.95,
+          "f1": 0.844,
+          "support": 20
+        },
+        "Custom Sajadah": {
+          "precision": 0.938,
+          "recall": 0.75,
+          "f1": 0.833,
+          "support": 20
+        },
+        "Custom Handuk": {
+          "precision": 0.864,
+          "recall": 0.95,
+          "f1": 0.905,
+          "support": 20
+        },
+        "Hampers": {
+          "precision": 0.895,
+          "recall": 0.85,
+          "f1": 0.872,
+          "support": 20
+        },
+        "Other": {
+          "precision": 0.889,
+          "recall": 0.8,
+          "f1": 0.842,
+          "support": 20
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "model": "LinearSVC(C=3)",
+  "selection": "val macro F1",
+  "val_macro_f1": 0.907,
+  "val": {
+    "accuracy": 0.9103,
+    "macro_f1": 0.907,
+    "per_class": {
+      "Ready Stock": {
+        "precision": 0.884,
+        "recall": 0.685,
+        "f1": 0.772,
+        "support": 89
+      },
+      "Custom Sajadah": {
+        "precision": 0.885,
+        "recall": 1.0,
+        "f1": 0.939,
+        "support": 92
+      },
+      "Custom Handuk": {
+        "precision": 0.83,
+        "recall": 1.0,
+        "f1": 0.907,
+        "support": 93
+      },
+      "Hampers": {
+        "precision": 0.989,
+        "recall": 0.978,
+        "f1": 0.984,
+        "support": 92
+      },
+      "Other": {
+        "precision": 1.0,
+        "recall": 0.875,
+        "f1": 0.933,
+        "support": 80
+      }
+    }
+  },
+  "test": {
+    "accuracy": 0.796,
+    "macro_f1": 0.8052,
+    "per_class": {
+      "Ready Stock": {
+        "precision": 0.977,
+        "recall": 0.955,
+        "f1": 0.966,
+        "support": 88
+      },
+      "Custom Sajadah": {
+        "precision": 0.932,
+        "recall": 0.739,
+        "f1": 0.824,
+        "support": 92
+      },
+      "Custom Handuk": {
+        "precision": 0.528,
+        "recall": 1.0,
+        "f1": 0.691,
+        "support": 93
+      },
+      "Hampers": {
+        "precision": 0.979,
+        "recall": 0.5,
+        "f1": 0.662,
+        "support": 92
+      },
+      "Other": {
+        "precision": 1.0,
+        "recall": 0.79,
+        "f1": 0.883,
+        "support": 81
+      }
+    }
+  },
+  "manual": {
+    "accuracy": 0.93,
+    "macro_f1": 0.9303,
+    "per_class": {
+      "Ready Stock": {
+        "precision": 0.87,
+        "recall": 1.0,
+        "f1": 0.93,
+        "support": 20
+      },
+      "Custom Sajadah": {
+        "precision": 1.0,
+        "recall": 0.8,
+        "f1": 0.889,
+        "support": 20
+      },
+      "Custom Handuk": {
+        "precision": 0.826,
+        "recall": 0.95,
+        "f1": 0.884,
+        "support": 20
+      },
+      "Hampers": {
+        "precision": 1.0,
+        "recall": 0.95,
+        "f1": 0.974,
+        "support": 20
+      },
+      "Other": {
+        "precision": 1.0,
+        "recall": 0.95,
+        "f1": 0.974,
+        "support": 20
+      }
+    }
+  },
+  "group_kfold_5": {
+    "mean": 0.8633,
+    "std": 0.0364
+  }
+}

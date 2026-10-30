@@ -1,0 +1,49 @@
+{
+  "model_final": "final-1",
+  "model_created_at": "2026-10-28T07:06:10+00:00",
+  "blind_file": "manual_test_blind.csv",
+  "blind_sha256_16": "6c42d2e595fa3983",
+  "n": 30,
+  "ensemble": {
+    "accuracy": 0.9,
+    "macro_f1": 0.9021,
+    "per_class": {
+      "Ready Stock": {
+        "precision": 1.0,
+        "recall": 0.833,
+        "f1": 0.909,
+        "support": 6
+      },
+      "Custom Sajadah": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 6
+      },
+      "Custom Handuk": {
+        "precision": 1.0,
+        "recall": 0.833,
+        "f1": 0.909,
+        "support": 6
+      },
+      "Hampers": {
+        "precision": 0.857,
+        "recall": 1.0,
+        "f1": 0.923,
+        "support": 6
+      },
+      "Other": {
+        "precision": 0.714,
+        "recall": 0.833,
+        "f1": 0.769,
+        "support": 6
+      }
+    }
+  },
+  "informasi_saja_bukan_untuk_memilih_model": {
+    "cnn_saja": 0.8729,
+    "logreg_saja": 0.9017
+  },
+  "needs_review_threshold": 0.6,
+  "needs_review_rate": 0.167
+}

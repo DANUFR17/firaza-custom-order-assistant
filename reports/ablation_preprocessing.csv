@@ -1,0 +1,5 @@
+varian,val,test,manual,groupkfold_mean,groupkfold_std
+A mentah (tanpa preprocessing),0.857,0.84,0.869,0.869,0.048
+B + slang + masking,0.887,0.83,0.91,0.853,0.049
+C + koreksi typo,0.894,0.81,0.91,0.864,0.051
+D + negasi (pipeline penuh),0.907,0.805,0.93,0.863,0.036

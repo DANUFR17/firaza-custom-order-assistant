@@ -1,0 +1,43 @@
+{
+  "version": "final-1",
+  "created_at": "2026-10-30T08:29:35+00:00",
+  "labels": [
+    "Ready Stock",
+    "Custom Sajadah",
+    "Custom Handuk",
+    "Hampers",
+    "Other"
+  ],
+  "dataset": {
+    "file": "dataset_sintetis_v3.csv",
+    "rows": 3000,
+    "sha256_16": "45eecc2bb17372c4"
+  },
+  "preprocessing": "src/preprocessing.py preprocess() default (negasi, fuzzy typo, masking)",
+  "lr_file": "baseline_lr.joblib",
+  "lr": {
+    "C": 1,
+    "tfidf": "word 1-2gram, sublinear_tf, min_df=2"
+  },
+  "cnn_files": [
+    "cnn_seed42.keras",
+    "cnn_seed43.keras",
+    "cnn_seed44.keras"
+  ],
+  "cnn": {
+    "epochs": 10,
+    "seeds": 3,
+    "augmentation": false,
+    "batch_size": 32
+  },
+  "cnn_weight": 0.5,
+  "review_threshold": 0.6,
+  "review_threshold_note": "nilai awal, belum dikalibrasi; sesuaikan setelah melihat data nyata",
+  "trained_on": "seluruh data generator (train+val+test); manual & blind tidak dipakai training",
+  "versions": {
+    "python": "3.9.2",
+    "tensorflow": "2.20.0",
+    "scikit-learn": "1.6.1",
+    "numpy": "2.0.2"
+  }
+}
