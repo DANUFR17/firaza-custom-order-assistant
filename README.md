@@ -12,7 +12,7 @@ serta pelacakan status New → Design/Preparation → Production → Completed.
 | Bagian | Status |
 |---|---|
 | Label guideline, dataset sintetis, preprocessing | Selesai |
-| Model klasifikasi (baseline, CNN/BiLSTM Keras, ensemble final) | Model final dibekukan; evaluasi blind menunggu dijalankan (satu kali) |
+| Model klasifikasi (baseline, CNN/BiLSTM Keras, ensemble final) | Selesai: model final dibekukan, evaluasi blind dijalankan satu kali |
 | Skema database (SQLite + SQLAlchemy) | Selesai |
 | Inference API (FastAPI) + fitur Gemini | Berikutnya |
 | Web admin (Streamlit) | Berikutnya |
@@ -66,7 +66,30 @@ python src/database.py --db data/firaza.db --seed
 | Ensemble CNN + Logistic Regression | 0,878 ± 0,057 |
 
 Selisih antar model masih berada dalam standar deviasi, jadi tidak ada klaim bahwa satu model jauh lebih baik.
-Hasil test blind: *diisi setelah `evaluate_blind.py` dijalankan*.
+### Test blind (30 pesan, dibuka satu kali setelah model dibekukan)
+
+Model final (ensemble CNN + Logistic Regression): **accuracy 0,90, macro F1 0,902** (3 salah dari 30).
+Skor ini bersumber dari 30 pesan (6 per kelas), sehingga satu kesalahan menggeser skor sekitar 3 poin; baca sebagai
+perkiraan kasar, bukan angka presisi. Detail ada di `reports/blind_metrics.json` dan `reports/blind_errors.csv`;
+`reports/blind_evaluation.lock.json` menandakan evaluasi dilakukan sekali.
+
+| Kelas | Precision | Recall | F1 |
+|---|---|---|---|
+| Ready Stock | 1,00 | 0,83 | 0,91 |
+| Custom Sajadah | 1,00 | 1,00 | 1,00 |
+| Custom Handuk | 1,00 | 0,83 | 0,91 |
+| Hampers | 0,86 | 1,00 | 0,92 |
+| Other | 0,71 | 0,83 | 0,77 |
+
+**Analisis error (3 pesan):**
+1. *"min box kado doang jual ga?"* (Ready Stock) diprediksi Other, confidence 0,42. Bahasa sangat santai dengan kata yang jarang muncul di data latih.
+2. *"Handuk polosnya sudah saya beli di toko lain. Apakah di sini bisa jasa bordir inisial saja?"* (Custom Handuk) diprediksi Other, confidence 0,49. Kasus jasa bordir untuk barang bawaan sendiri belum punya template di generator.
+3. *"Paket hampers yang datang kurang satu mug, padahal handuk dan kartu ucapannya lengkap. Bagaimana proses komplainnya?"* (Other) diprediksi Hampers, confidence 0,86. Komplain yang menyebut banyak isi hampers; ini satu-satunya error yang yakin.
+
+Dua dari tiga error berconfidence di bawah 0,6 sehingga akan ditandai `needs_review` (5 dari 30 pesan ditandai; 3 di antaranya benar). Pada 25 pesan yang tidak ditandai, 24 benar. Pola ini searah dengan tujuan flag, tetapi sampelnya terlalu kecil untuk disimpulkan.
+Kelas Other menjadi "penampung" bagi pesan informal atau tidak lazim, sehingga precision-nya paling rendah.
+
+Karena error blind sudah dilihat, perbaikan data berdasarkan error ini akan membuat test blind tidak lagi buta; evaluasi ulang membutuhkan test blind baru.
 
 ## Keterbatasan
 
