@@ -15,9 +15,21 @@ Daftar ini dilengkapi seiring pengerjaan. Versi diambil dari lingkungan pengemba
 | SQLAlchemy | 2.0.55 | Bayer, M. (2012). SQLAlchemy. Dalam *The Architecture of Open Source Applications, Vol. II.* https://www.sqlalchemy.org |
 | joblib | 1.5.3 | https://joblib.readthedocs.io |
 
-## Akan ditambahkan saat dipakai
+## Library tambahan (API, Generative AI, web, pengujian)
 
-FastAPI, Uvicorn, Streamlit, Google Gemini API (`google-genai`), dan, bila RAG dikerjakan, vector database serta model embedding yang dipilih.
+| Library / layanan | Referensi |
+|---|---|
+| FastAPI | Ramírez, S. *FastAPI.* https://fastapi.tiangolo.com |
+| Uvicorn | https://www.uvicorn.org |
+| Pydantic | https://docs.pydantic.dev |
+| Google Gemini API dan SDK `google-genai` | https://ai.google.dev/gemini-api/docs |
+| Streamlit | https://streamlit.io |
+| Requests | https://requests.readthedocs.io |
+| python-dotenv | https://github.com/theskumar/python-dotenv |
+| pytest, httpx | https://docs.pytest.org , https://www.python-httpx.org |
+
+Versi paket di atas diambil dari `pip freeze` (isi setelah semuanya terpasang di venv).
+Bila RAG dikerjakan, tambahkan vector database dan model embedding yang dipilih.
 
 ## Data
 

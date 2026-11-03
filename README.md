@@ -7,15 +7,16 @@ Sistem membantu admin mengubah pesan customer menjadi custom order yang terstruk
 klasifikasi jenis order oleh model yang dilatih sendiri, ringkasan order dan kartu ucapan lewat Generative AI,
 serta pelacakan status New → Design/Preparation → Production → Completed.
 
-## Status (progres sekitar 51%)
+## Status
 
 | Bagian | Status |
 |---|---|
 | Label guideline, dataset sintetis, preprocessing | Selesai |
 | Model klasifikasi (baseline, CNN/BiLSTM Keras, ensemble final) | Selesai: model final dibekukan, evaluasi blind dijalankan satu kali |
 | Skema database (SQLite + SQLAlchemy) | Selesai |
-| Inference API (FastAPI) + fitur Gemini | Berikutnya |
-| Web admin (Streamlit) | Berikutnya |
+| Inference API (FastAPI) + CRUD + status order | Selesai, teruji otomatis (`pytest`) |
+| Fitur Gemini (structured summary, kartu ucapan) | Kode dan fallback selesai; uji dengan key Gemini sungguhan menunggu |
+| Web admin (Streamlit) | Selesai (dashboard, order baru, daftar order, customer, produk) |
 | Dokumentasi akhir, sitasi, demo | Berjalan |
 | RAG (opsional) | Diputuskan belakangan |
 
@@ -25,7 +26,10 @@ serta pelacakan status New → Design/Preparation → Production → Completed.
 data/        dataset_sintetis_v3.csv, manual_test.csv, manual_test_blind.csv
 docs/        label_guideline.md, db_schema.md, (project plan)
 src/         generate_dataset.py, preprocessing.py, common.py, train_baseline.py, train_keras.py,
-             compare_models.py, train_final.py, predictor.py, evaluate_blind.py, database.py
+             compare_models.py, train_final.py, predictor.py, evaluate_blind.py, database.py,
+             schemas.py, genai_service.py, api.py
+app/         streamlit_app.py (web admin; memanggil API lewat HTTP)
+tests/       test_api.py, test_web.py (pytest)
 reports/     metrik, confusion matrix, daftar error (dibuat skrip)
 models/      baseline_tfidf.joblib, keras_cnn.keras, final/ (model beku)
 ```
@@ -44,7 +48,16 @@ python src/compare_models.py          # dan: --cv
 python src/train_final.py             # membekukan model final ke models/final/
 python src/evaluate_blind.py          # SEKALI SAJA (dilindungi file lock)
 python src/database.py --db data/firaza.db --seed
+
+# Menjalankan aplikasi (dua terminal, venv aktif)
+uvicorn api:app --app-dir src --reload        # API: http://127.0.0.1:8000/docs
+streamlit run app/streamlit_app.py            # Web: http://localhost:8501
+
+pytest -q                                     # uji otomatis API dan web
 ```
+
+Fitur Gemini membutuhkan `GEMINI_API_KEY` di `.env` (lihat `.env.example`); tanpa key, ringkasan dan kartu ucapan memakai fallback berbasis aturan.
+Dokumentasi: `docs/api.md`, `docs/prompts.md`, `docs/db_schema.md`, `docs/label_guideline.md`.
 
 ## Pendekatan model
 
