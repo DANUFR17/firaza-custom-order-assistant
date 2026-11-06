@@ -104,6 +104,9 @@ def test_alur_order_end_to_end(client, has_model):
     assert g["sumber"] == "fallback" and "Budi & Sarah" in g["kartu_ucapan"]
     assert client.get(f"/orders/{oid}").json()["greeting_card"] == g["kartu_ucapan"]
 
+    r = client.put(f"/orders/{oid}", json={"greeting_card": "Edit admin", "notes": "tes"})
+    assert r.json()["greeting_card"] == "Edit admin" and r.json()["notes"] == "tes"
+
     bad = client.post(f"/orders/{oid}/status", json={"status": "Completed"})
     assert bad.status_code == 409 and bad.json()["detail"]["transisi_diizinkan"] == ["Design/Preparation"]
     for st in ["Design/Preparation", "Production", "Completed"]:
@@ -151,3 +154,12 @@ def test_gemini_grounding_dan_fallback(tmp_path, monkeypatch):
         s2 = c.post(f"/orders/{oid}/summary", params={"force": True}).json()
         assert s2["sumber"] == "fallback" and "Gemini gagal" in s2["peringatan"][0]
         assert s2["items"][0]["jumlah"] == 20
+
+
+def test_response_text_abaikan_bagian_non_teks():
+    from types import SimpleNamespace as NS
+    from genai_service import response_text
+    parts = [NS(text=None, thought=False), NS(text="isi jawaban", thought=False), NS(text="pikiran internal", thought=True)]
+    resp = NS(candidates=[NS(content=NS(parts=parts))], text="cadangan")
+    assert response_text(resp) == "isi jawaban"
+    assert response_text(NS(candidates=[], text="cadangan")) == "cadangan"

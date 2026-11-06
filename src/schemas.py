@@ -186,6 +186,7 @@ class OrderUpdate(BaseModel):
     raw_message: Optional[str] = Field(None, max_length=4000)
     due_date: Optional[datetime] = None
     notes: Optional[str] = None
+    greeting_card: Optional[str] = Field(None, max_length=2000, description="Simpan hasil edit kartu ucapan oleh admin")
 
     @field_validator("channel")
     @classmethod

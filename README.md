@@ -17,7 +17,8 @@ serta pelacakan status New → Design/Preparation → Production → Completed.
 | Inference API (FastAPI) + CRUD + status order | Selesai, teruji otomatis (`pytest`) |
 | Fitur Gemini (structured summary, kartu ucapan) | Kode dan fallback selesai; uji dengan key Gemini sungguhan menunggu |
 | Web admin (Streamlit) | Selesai (dashboard, order baru, daftar order, customer, produk) |
-| Dokumentasi akhir, sitasi, demo | Berjalan |
+| Dokumentasi (arsitektur, model, API, prompt, skema DB, panduan) dan sitasi | Draf lengkap; tangkapan layar menunggu |
+| Demo | Berikutnya |
 | RAG (opsional) | Diputuskan belakangan |
 
 ## Struktur
@@ -57,7 +58,7 @@ pytest -q                                     # uji otomatis API dan web
 ```
 
 Fitur Gemini membutuhkan `GEMINI_API_KEY` di `.env` (lihat `.env.example`); tanpa key, ringkasan dan kartu ucapan memakai fallback berbasis aturan.
-Dokumentasi: `docs/api.md`, `docs/prompts.md`, `docs/db_schema.md`, `docs/label_guideline.md`.
+Dokumentasi: `docs/architecture.md`, `docs/model.md`, `docs/api.md`, `docs/prompts.md`, `docs/db_schema.md`, `docs/label_guideline.md`, `docs/user_guide.md`.
 
 ## Pendekatan model
 

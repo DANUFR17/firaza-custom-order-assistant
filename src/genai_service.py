@@ -200,6 +200,20 @@ def fallback_greeting(acara: Optional[str], names: str) -> str:
     return GREETING_FALLBACKS[group].format(names=f" untuk {names}" if names else "")
 
 
+def response_text(resp) -> str:
+    """Ambil teks jawaban dari respons Gemini dengan menggabungkan bagian teks biasa.
+    Model "thinking" menyertakan bagian non-teks (thought_signature); membaca per bagian menghindari
+    peringatan SDK dan memastikan bagian pikiran internal tidak ikut tercampur ke keluaran."""
+    try:
+        parts = resp.candidates[0].content.parts or []
+        text = "".join(p.text for p in parts if getattr(p, "text", None) and not getattr(p, "thought", False))
+        if text:
+            return text
+    except Exception:
+        pass
+    return resp.text
+
+
 class GenAIService:
     def __init__(self):
         self.api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
@@ -225,14 +239,14 @@ class GenAIService:
             model=self.model, contents=prompt,
             config=types.GenerateContentConfig(system_instruction=SUMMARY_SYSTEM_PROMPT, temperature=0.2,
                                                response_mime_type="application/json", response_schema=GeminiSummary))
-        return resp.text
+        return response_text(resp)
 
     def _call_greeting(self, prompt: str) -> str:
         from google.genai import types
         resp = self.client.models.generate_content(
             model=self.model, contents=prompt,
             config=types.GenerateContentConfig(system_instruction=GREETING_SYSTEM_PROMPT, temperature=0.7))
-        return resp.text
+        return response_text(resp)
 
     @staticmethod
     def _key(kind: str, model: str, prompt: str) -> str:
