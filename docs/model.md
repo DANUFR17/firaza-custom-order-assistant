@@ -29,14 +29,14 @@ Split dilakukan per **template**, bukan per baris, sehingga template di val/test
 
 ### Ablation (macro F1, baseline TF-IDF + linear, data v3)
 
-| Varian | Val | Test (grouped) | Manual | GroupKFold (5) |
+| Varian | Val | Test (grouped) | Manual | CV per template (5×3) |
 |---|---|---|---|---|
-| A. Mentah (tanpa preprocessing) | 0,857 | 0,840 | 0,869 | 0,869 ± 0,048 |
-| B. + slang + masking | 0,887 | 0,830 | 0,910 | 0,853 ± 0,049 |
-| C. + koreksi typo | 0,894 | 0,810 | 0,910 | 0,864 ± 0,051 |
-| D. + negasi (pipeline penuh) | 0,907 | 0,805 | 0,930 | 0,863 ± 0,036 |
+| A. Mentah (tanpa preprocessing) | 0,857 | 0,840 | 0,869 | 0,864 ± 0,055 |
+| B. + slang + masking | 0,887 | 0,830 | 0,910 | 0,842 ± 0,056 |
+| C. + koreksi typo | 0,894 | 0,810 | 0,910 | 0,847 ± 0,048 |
+| D. + negasi (pipeline penuh) | 0,907 | 0,805 | 0,930 | 0,849 ± 0,045 |
 
-**Pembacaan jujur:** preprocessing menaikkan skor di val dan manual (pesan bergaya manusia: +0,05 sampai +0,06), tetapi tidak menaikkan, bahkan sedikit menurunkan, skor di test sintetis, dan GroupKFold relatif datar (selisih masih di dalam standar deviasi). Jadi manfaatnya nyata untuk pesan informal, tetapi tidak konsisten pada template baru. Pipeline penuh tetap dipakai karena kasus nyata lebih mirip pesan informal.
+**Pembacaan jujur:** preprocessing menaikkan skor di val dan manual (pesan bergaya manusia: sekitar +0,05 sampai +0,06), tetapi **tidak membantu, bahkan sedikit menurunkan**, skor di test sintetis dan di validasi silang per template (0,864 → 0,849, selisih masih di dalam simpangan baku). Jadi manfaatnya nyata untuk pesan informal, tetapi tidak boleh diklaim "selalu meningkatkan akurasi". Pipeline penuh tetap dipakai karena pesan customer nyata lebih mirip pesan informal daripada template generator.
 
 ## 3. Model
 
@@ -49,8 +49,9 @@ Split dilakukan per **template**, bukan per baris, sehingga template di val/test
 
 ## 4. Protokol evaluasi
 
-- Pemilihan model/hyperparameter memakai split `val` dan GroupKFold; `test`, `manual`, dan `blind` hanya dilaporkan.
-- Karena setiap split hanya berisi beberapa template per kelas, skor satu split bergoyang kuat (CNN: val 0,99 tetapi test 0,79). **GroupKFold per template (5 lipatan)** dipakai sebagai acuan utama.
+- Pemilihan model/hyperparameter memakai split `val` dan validasi silang per template; `test`, `manual`, dan `blind` hanya dilaporkan.
+- Karena setiap split hanya berisi beberapa template per kelas, skor satu split bergoyang kuat (CNN: val 0,99 tetapi test 0,79). **Validasi silang per template (5 lipatan × 3 ulangan, 15 evaluasi)** dipakai sebagai acuan utama.
+- Pembagi lipatannya **dibuat sendiri** (`common.grouped_folds`: stratified per label, seed tetap, deterministik) karena `GroupKFold` bawaan scikit-learn membagi kelompok dengan algoritma yang berbeda antar versi library, sehingga angkanya bergeser bila versi berbeda (ditemukan saat angka di mesin dan sandbox berbeda: CNN 0,855 vs 0,904 hanya karena versi scikit-learn).
 - Model final dilatih ulang pada seluruh data generator, lalu dievaluasi **sekali** pada test blind (`evaluate_blind.py` dengan file lock).
 
 ## 5. Hasil (macro F1)
@@ -64,17 +65,19 @@ Split dilakukan per **template**, bukan per baris, sehingga template di val/test
 | CNN + augmentasi token | 0,954 | 0,725 | 0,899 |
 | Ensemble CNN + LogReg | 0,987 | 0,794 | 0,880 |
 
-**GroupKFold per template (acuan utama):**
+**Validasi silang per template, 5 lipatan × 3 ulangan (acuan utama):**
 
 | Model | Rata-rata ± std |
 |---|---|
-| TF-IDF + LogReg | 0,853 ± 0,040 |
-| CNN | 0,855 ± 0,066 |
-| CNN + augmentasi | 0,860 ± 0,065 |
-| **Ensemble CNN + LogReg** | **0,878 ± 0,057** |
-| Ensemble CNN + augmentasi + LogReg | 0,864 ± 0,070 |
+| TF-IDF + LogReg | 0,869 ± 0,041 |
+| CNN | 0,903 ± 0,048 |
+| CNN + augmentasi | 0,868 ± 0,060 |
+| **Ensemble CNN + LogReg** | **0,907 ± 0,045** |
+| Ensemble CNN + augmentasi + LogReg | 0,880 ± 0,049 |
 
-Selisih antar model masih di dalam standar deviasi, jadi tidak ada klaim bahwa satu model jauh lebih baik. Ensemble dipilih karena tertinggi di GroupKFold dan tidak pernah terburuk. Augmentasi token tidak dipakai karena menurunkan skor di test.
+Perbandingan berpasangan (model yang sama diuji pada lipatan yang sama, 15 lipatan): CNN lebih tinggi dari LogReg rata-rata **+0,034** (lebih tinggi di 12 dari 15 lipatan); ensemble lebih tinggi dari LogReg **+0,038** (13 dari 15); ensemble vs CNN hanya **+0,004** (9 dari 15, praktis sama).
+
+**Pembacaan:** CNN lebih baik dari baseline TF-IDF + LogReg dan cukup konsisten. Ensemble hampir sama dengan CNN; alasan memakainya bukan "jauh lebih akurat" melainkan **lebih aman**: pada test blind (30 pesan) LogReg setara atau lebih tinggi daripada CNN (0,902 vs 0,873), sehingga menggabungkan keduanya melindungi dari kelemahan salah satunya, dan probabilitasnya lebih halus untuk penanda `needs_review`. Augmentasi token tidak dipakai karena menurunkan skor. Simpangan baku antar lipatan masih sekitar 0,04-0,06: skor sangat bergantung pada template mana yang ada di data uji.
 
 **Test blind (30 pesan, satu kali):** ensemble final **accuracy 0,90, macro F1 0,902**. Sebagai informasi (bukan untuk memilih model): CNN saja 0,873, LogReg saja 0,902.
 
@@ -86,7 +89,7 @@ Selisih antar model masih di dalam standar deviasi, jadi tidak ada klaim bahwa s
 | Hampers | 0,86 | 1,00 | 0,92 |
 | Other | 0,71 | 0,83 | 0,77 |
 
-Target di project plan (macro F1 minimal 80%, target 85%) terpenuhi pada GroupKFold dan test blind.
+Target di project plan (macro F1 minimal 80%, target 85%) terpenuhi pada validasi silang per template dan test blind.
 
 ### Analisis error (3 dari 30 pesan blind)
 1. "min box kado doang jual ga?" (Ready Stock) diprediksi Other, confidence 0,42. Bahasa sangat santai dengan kata yang jarang muncul di data latih.

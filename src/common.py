@@ -15,7 +15,9 @@ import sys
 
 import matplotlib
 
-matplotlib.use("Agg")
+# Skrip terminal: tanpa jendela (Agg). Di notebook (ipykernel) biarkan backend inline agar grafik tampil dan tersimpan.
+if "ipykernel" not in sys.modules:
+    matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -74,6 +76,29 @@ def plot_confusion(y_true, y_pred, title, path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     fig.savefig(path, dpi=130)
     plt.close(fig)
+
+
+def grouped_folds(groups, labels, k=5, repeats=3, seed=42):
+    """Lipatan per-KELOMPOK (template) yang berulang, deterministik, dan tidak bergantung versi scikit-learn.
+
+    Mengapa dibuat sendiri: GroupKFold bawaan scikit-learn membagi kelompok dengan algoritma yang berubah antar versi,
+    sehingga angka CV bergeser bila versi library berbeda. Di sini tiap label dibagi sendiri-sendiri (stratified):
+    template milik satu label diacak dengan seed tetap lalu dibagikan bergiliran ke k lipatan, dan seluruh proses
+    diulang `repeats` kali dengan pengacakan berbeda (hasil lebih stabil dibanding satu pembagian).
+    Yield: (repeat, lipatan, indeks_train, indeks_uji).
+    """
+    groups, labels = np.asarray(groups), np.asarray(labels)
+    group_label = {g: labels[groups == g][0] for g in np.unique(groups)}
+    for r in range(repeats):
+        rng = np.random.RandomState(seed + r)
+        fold_of = {}
+        for lab in sorted(set(group_label.values())):
+            gs = sorted(g for g, l in group_label.items() if l == lab)
+            for i, gi in enumerate(rng.permutation(len(gs))):
+                fold_of[gs[gi]] = i % k
+        fold_ids = np.array([fold_of[g] for g in groups])
+        for f in range(k):
+            yield r, f, np.where(fold_ids != f)[0], np.where(fold_ids == f)[0]
 
 
 def save_json(obj, path):

@@ -4,7 +4,8 @@ schemas.py - Skema Pydantic (v2) untuk API Firaza Custom Order Management.
 Catatan kompatibilitas: venv pengembangan memakai Python 3.9, jadi memakai Optional[...] / List[...]
 (bukan `X | None`) agar Pydantic bisa mengevaluasi anotasi saat runtime.
 """
-from datetime import datetime
+import re
+from datetime import date, datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -258,3 +259,71 @@ class GreetingOut(BaseModel):
     kartu_ucapan: str
     sumber: Literal["gemini", "fallback"]
     peringatan: List[str] = []
+
+
+# ------------------------------------------------------------------ halaman pelanggan (publik)
+class PublicItemIn(BaseModel):
+    product_id: Optional[int] = None
+    quantity: int = Field(1, ge=1, le=10000)
+    color: Optional[str] = Field(None, max_length=40)
+    custom_text: Optional[str] = Field(None, max_length=200, description="Nama/teks yang ingin dicetak atau dibordir")
+    font: Optional[str] = None
+    layout: Optional[str] = None
+
+    @field_validator("font")
+    @classmethod
+    def _font(cls, v):
+        return _match_choice(v, FONT_OPTIONS, "font")
+
+    @field_validator("layout")
+    @classmethod
+    def _layout(cls, v):
+        return _match_choice(v, LAYOUT_OPTIONS, "layout")
+
+
+class PublicOrderCreate(BaseModel):
+    name: str = Field(..., min_length=2, max_length=120)
+    phone: str = Field(..., min_length=8, max_length=30, examples=["0812-3456-7890"])
+    message: str = Field(..., min_length=5, max_length=2000,
+                         examples=["Mau sajadah navy 20 pcs untuk nikahan, custom nama Budi & Sarah"])
+    due_date: Optional[date] = None
+    notes: Optional[str] = Field(None, max_length=500)
+    items: List[PublicItemIn] = Field([], max_length=5)
+
+    @field_validator("phone")
+    @classmethod
+    def _phone(cls, v):
+        if not 8 <= len(re.sub(r"\D", "", v)) <= 15:
+            raise ValueError("nomor telepon harus berisi 8-15 digit")
+        return v.strip()
+
+
+class PublicOrderOut(BaseModel):
+    order_code: str
+    status: StatusLit
+    created_at: datetime
+    pesan: str
+
+
+class TrackItem(BaseModel):
+    produk: Optional[str]
+    jumlah: int
+    warna: Optional[str]
+    teks_custom: Optional[str]
+    font: Optional[str]
+    layout: Optional[str]
+
+
+class TrackHistory(BaseModel):
+    status: str
+    waktu: datetime
+
+
+class TrackOut(BaseModel):
+    order_code: str
+    status: StatusLit
+    jenis_pesanan: Optional[str] = Field(None, description="Terisi setelah dikonfirmasi admin")
+    due_date: Optional[datetime]
+    created_at: datetime
+    items: List[TrackItem]
+    riwayat: List[TrackHistory]

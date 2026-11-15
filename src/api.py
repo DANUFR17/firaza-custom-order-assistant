@@ -12,7 +12,9 @@ Konfigurasi lewat environment / .env:
     CORS_ORIGINS  daftar origin dipisah koma (default: *, hanya untuk pengembangan)
 """
 import os
+import re
 from contextlib import asynccontextmanager
+from datetime import datetime, time
 from typing import Any, Dict, List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
@@ -84,6 +86,16 @@ def check_refs(db: Session, product_id: Optional[int], vendor_id: Optional[int])
         raise HTTPException(422, f"product_id {product_id} tidak ditemukan")
     if vendor_id is not None and db.get(Vendor, vendor_id) is None:
         raise HTTPException(422, f"vendor_id {vendor_id} tidak ditemukan")
+
+
+def phone_digits(p: Optional[str]) -> str:
+    return re.sub(r"\D", "", p or "")
+
+
+def phone_match(a: Optional[str], b: Optional[str]) -> bool:
+    """Cocok bila 9 digit terakhir sama, sehingga 0812-3456-7890 dan +62 812 3456 7890 dianggap nomor yang sama."""
+    da, db = phone_digits(a), phone_digits(b)
+    return len(da) >= 8 and len(db) >= 8 and da[-9:] == db[-9:]
 
 
 def items_for_genai(order: Order) -> List[Dict[str, Any]]:
@@ -354,3 +366,44 @@ def order_greeting(order_id: int, request: Request, payload: Optional[S.Greeting
     order.greeting_card = out["kartu_ucapan"]
     db.commit()
     return out
+
+
+# ================================================================== halaman pelanggan (publik, tanpa login)
+@app.post("/public/orders", response_model=S.PublicOrderOut, status_code=201, tags=["Pelanggan"],
+          summary="Pelanggan mengirim pesanan sendiri (masuk sebagai order baru, kanal Website)")
+def public_create_order(payload: S.PublicOrderCreate, request: Request, db: Session = Depends(get_db)):
+    for it in payload.items:
+        check_refs(db, it.product_id, None)
+    customer = next((c for c in db.scalars(select(Customer).where(Customer.phone.is_not(None)))
+                     if phone_match(c.phone, payload.phone)), None)
+    if customer is None:
+        customer = Customer(name=payload.name.strip(), phone=payload.phone, channel="Website")
+        db.add(customer)
+        db.flush()
+    fields: Dict[str, Any] = {"notes": payload.notes,
+                              "due_date": datetime.combine(payload.due_date, time.min) if payload.due_date else None}
+    clf = request.app.state.classifier
+    if clf is not None:                      # usulan AI untuk admin; jenis final tetap dikonfirmasi admin
+        pred = clf.predict(payload.message)
+        fields.update(predicted_type=pred["label"], predicted_confidence=pred["confidence"])
+    order = create_order(db, customer, raw_message=payload.message, channel="Website", **fields)
+    for it in payload.items:
+        order.items.append(OrderItem(**it.model_dump()))
+    db.commit()
+    db.refresh(order)
+    return {"order_code": order.order_code, "status": order.status.value, "created_at": order.created_at,
+            "pesan": "Pesanan diterima. Simpan kode pesanan untuk melacak statusnya."}
+
+
+@app.get("/public/track", response_model=S.TrackOut, tags=["Pelanggan"],
+         summary="Lacak status pesanan dengan kode pesanan dan nomor telepon")
+def public_track(order_code: str = Query(..., min_length=3, max_length=20), phone: str = Query(..., min_length=8, max_length=30),
+                 db: Session = Depends(get_db)):
+    order = db.scalar(select(Order).where(Order.order_code == order_code.strip().upper()))
+    if order is None or not phone_match(order.customer.phone, phone):
+        raise HTTPException(404, "Pesanan tidak ditemukan atau nomor telepon tidak cocok")
+    return {"order_code": order.order_code, "status": order.status.value, "jenis_pesanan": order.order_type,
+            "due_date": order.due_date, "created_at": order.created_at,
+            "items": [{"produk": it.product.name if it.product else None, "jumlah": it.quantity, "warna": it.color,
+                       "teks_custom": it.custom_text, "font": it.font, "layout": it.layout} for it in order.items],
+            "riwayat": [{"status": h.to_status, "waktu": h.changed_at} for h in order.history]}

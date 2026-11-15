@@ -81,3 +81,40 @@ def test_alur_order_di_web(app):
     assert not app.exception
     assert "Design/Preparation" in app.subheader[0].value
     assert app.client.get(f"/orders/{o['id']}").json()["status"] == "Design/Preparation"
+
+
+def test_halaman_pelanggan(app):
+    app.run()
+    app.sidebar.radio(key="view").set_value("Pelanggan").run()
+    assert not app.exception, [e.value for e in app.exception]
+    # validasi sisi form: nomor tidak valid ditolak tanpa memanggil API
+    app.text_input(key="pc_name").set_value("Sinta")
+    app.text_input(key="pc_phone").set_value("123")
+    app.text_area(key="pc_msg").set_value(BRIEF).run()
+    app.button(key="btn_pc_submit").click().run()
+    assert any("nomor WhatsApp" in e.value for e in app.error)
+    # kirim pesanan valid
+    app.text_input(key="pc_phone").set_value("0812-3456-7890").run()
+    app.button(key="btn_pc_submit").click().run()
+    assert not app.exception
+    assert "FRZ-0001" in app.success[0].value
+    # lacak: nomor berbeda format tetap cocok
+    app.sidebar.radio(key="menu_pelanggan").set_value("Lacak Pesanan").run()
+    app.text_input(key="pt_code").set_value("frz-0001")
+    app.text_input(key="pt_phone").set_value("+62 812 3456 7890").run()
+    app.button(key="btn_pt_track").click().run()
+    assert not app.exception
+    assert "Pesanan diterima" in app.subheader[0].value
+    # nomor salah
+    app.text_input(key="pt_phone").set_value("081200000000").run()
+    app.button(key="btn_pt_track").click().run()
+    assert any("tidak ditemukan" in e.value for e in app.error)
+
+    # admin melihat order tersebut dari kanal Website, belum dikonfirmasi
+    o = app.client.get("/orders").json()[0]
+    assert o["channel"] == "Website" and o["order_type"] is None
+    app.sidebar.radio(key="view").set_value("Admin").run()
+    assert not app.exception
+    assert app.metric[5].value == "1"                                            # 1 order dari kanal Website
+    if app.client.app.state.classifier is not None:
+        assert app.metric[4].value == "1"                                        # menunggu konfirmasi jenis

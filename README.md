@@ -16,7 +16,7 @@ serta pelacakan status New → Design/Preparation → Production → Completed.
 | Skema database (SQLite + SQLAlchemy) | Selesai |
 | Inference API (FastAPI) + CRUD + status order | Selesai, teruji otomatis (`pytest`) |
 | Fitur Gemini (structured summary, kartu ucapan) | Kode dan fallback selesai; uji dengan key Gemini sungguhan menunggu |
-| Web admin (Streamlit) | Selesai (dashboard, order baru, daftar order, customer, produk) |
+| Web (Streamlit) | Selesai: tampilan Admin (dashboard, order, customer, produk) dan tampilan Pelanggan (buat dan lacak pesanan) |
 | Dokumentasi (arsitektur, model, API, prompt, skema DB, panduan) dan sitasi | Draf lengkap; tangkapan layar menunggu |
 | Demo | Berikutnya |
 | RAG (opsional) | Diputuskan belakangan |
@@ -52,12 +52,13 @@ python src/database.py --db data/firaza.db --seed
 
 # Menjalankan aplikasi (dua terminal, venv aktif)
 uvicorn api:app --app-dir src --reload        # API: http://127.0.0.1:8000/docs
-streamlit run app/streamlit_app.py            # Web: http://localhost:8501
+streamlit run app/streamlit_app.py            # Web: http://localhost:8501  (pelanggan: /?mode=pelanggan)
 
 pytest -q                                     # uji otomatis API dan web
 ```
 
 Fitur Gemini membutuhkan `GEMINI_API_KEY` di `.env` (lihat `.env.example`); tanpa key, ringkasan dan kartu ucapan memakai fallback berbasis aturan.
+Fitur Gemini diuji dengan key sungguhan pada 6 November 2026 memakai model `gemini-3.1-flash-lite` (structured summary menghasilkan JSON valid, `sumber: gemini`). Nama model dapat diganti lewat `GEMINI_MODEL` bila daftar model Google berubah; cek dengan `python src/genai_service.py --check`.
 Dokumentasi: `docs/architecture.md`, `docs/model.md`, `docs/api.md`, `docs/prompts.md`, `docs/db_schema.md`, `docs/label_guideline.md`, `docs/user_guide.md`.
 
 ## Pendekatan model
@@ -68,18 +69,19 @@ Dokumentasi: `docs/architecture.md`, `docs/model.md`, `docs/api.md`, `docs/promp
   Stopword sengaja tidak dibuang karena kata negasi menentukan niat order.
 - **Model (dilatih dari nol, tanpa model pra-latih, TF Hub, atau AutoML):** TF-IDF + Logistic Regression,
   CNN 1D (Keras), dan BiLSTM. Model final adalah **ensemble CNN + Logistic Regression** (bobot 0,5/0,5).
-- **Evaluasi:** split per template (grouped), GroupKFold 5 lipatan, test set manual (ditulis sendiri, sudah dipakai untuk
+- **Evaluasi:** split per template (grouped), validasi silang per template (5 lipatan × 3 ulangan), test set manual (ditulis sendiri, sudah dipakai untuk
   analisis error sehingga berstatus data pengembangan), dan test set blind (dibuka sekali setelah model dibekukan).
 
 ## Hasil (macro F1)
 
-| Model | GroupKFold (5 lipatan, per template) |
+| Model | Validasi silang per template (5 lipatan × 3 ulangan) |
 |---|---|
-| TF-IDF + Logistic Regression | 0,853 ± 0,040 |
-| CNN | 0,855 ± 0,066 |
-| Ensemble CNN + Logistic Regression | 0,878 ± 0,057 |
+| TF-IDF + Logistic Regression | 0,869 ± 0,041 |
+| CNN | 0,903 ± 0,048 |
+| **Ensemble CNN + Logistic Regression (model final)** | **0,907 ± 0,045** |
 
-Selisih antar model masih berada dalam standar deviasi, jadi tidak ada klaim bahwa satu model jauh lebih baik.
+CNN lebih tinggi dari baseline di 12 dari 15 lipatan (rata-rata +0,034). Ensemble hampir sama dengan CNN (+0,004); alasan memakainya adalah ketahanan, bukan lonjakan akurasi (di test blind LogReg setara atau lebih tinggi dari CNN). Detail dan caveat ada di `docs/model.md`.
+
 ### Test blind (30 pesan, dibuka satu kali setelah model dibekukan)
 
 Model final (ensemble CNN + Logistic Regression): **accuracy 0,90, macro F1 0,902** (3 salah dari 30).
@@ -108,7 +110,7 @@ Karena error blind sudah dilihat, perbaikan data berdasarkan error ini akan memb
 ## Keterbatasan
 
 - Data sepenuhnya sintetis; performa pada pesan customer nyata Firaza belum teruji.
-- Jumlah template terbatas, sehingga skor pada satu split val/test bergoyang; gunakan GroupKFold sebagai acuan.
+- Jumlah template terbatas, sehingga skor pada satu split val/test bergoyang; gunakan validasi silang per template sebagai acuan.
 - Ambang `needs_review` (0,6) belum dikalibrasi.
 
 ## Sitasi

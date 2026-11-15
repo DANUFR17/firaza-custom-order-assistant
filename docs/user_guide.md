@@ -56,6 +56,16 @@ Status tidak bisa dilompati (mis. dari Design/Preparation langsung ke Completed)
 - **Customer:** tambah, ubah, dan hapus (customer yang masih punya order tidak bisa dihapus).
 - **Produk:** tambah produk, nonaktifkan atau aktifkan kembali. Harga dikosongkan sampai diisi sesuai katalog Firaza.
 
+### e. Tampilan Pelanggan (pelanggan memesan sendiri)
+Di sidebar pilih **Tampilan: Pelanggan** (atau buka `http://localhost:8501/?mode=pelanggan`). Tampilan ini tidak menampilkan data admin.
+
+1. **Buat Pesanan:** pelanggan mengisi nama, nomor WhatsApp, dan menceritakan pesanannya; detail tambahan (produk, jumlah, warna, nama/teks, font, posisi, tanggal dibutuhkan) opsional. Setelah **Kirim Pesanan**, muncul **kode pesanan** (mis. `FRZ-0001`).
+2. **Lacak Pesanan:** pelanggan memasukkan kode dan nomor WhatsApp yang sama untuk melihat tahap pesanan (Pesanan diterima → Persiapan dan desain → Produksi → Selesai), item, dan riwayat.
+
+**Di sisi admin:** order dari pelanggan muncul di **Daftar Order** dengan kanal **Website**, sudah diberi usulan AI tetapi **jenis finalnya menunggu konfirmasi admin**. Dashboard menampilkan jumlah order yang menunggu konfirmasi, dan di Daftar Order ada filter **Hanya yang belum dikonfirmasi**. Pelanggan yang memesan lagi dengan nomor yang sama otomatis dikenali sebagai customer yang sama.
+
+**[Gambar: halaman Buat Pesanan (pelanggan), halaman Lacak Pesanan, dan Daftar Order dengan filter belum dikonfirmasi]**
+
 ## 3. Cara membaca hasil AI
 
 | Elemen | Arti |
@@ -81,7 +91,7 @@ Status tidak bisa dilompati (mis. dari Design/Preparation langsung ke Completed)
 | Ingin mengosongkan data uji | Hentikan API, hapus `data/firaza.db`, jalankan lagi (dibuat ulang otomatis) |
 
 ## 5. Keterbatasan yang perlu diketahui
-- Belum ada login: cocok untuk satu admin di komputer lokal.
+- Belum ada login (sesuai arahan advisor): cocok untuk penggunaan lokal. Pelacakan pelanggan dilindungi kode pesanan dan nomor telepon, tetapi belum ada pembatasan percobaan.
 - Model dilatih dari data sintetis, sehingga pesan yang sangat tidak lazim bisa salah klasifikasi; manfaatkan penanda confidence rendah.
 - Pratinjau teks hanya perkiraan, bukan hasil cetak sebenarnya.
 - Tidak ada integrasi otomatis ke marketplace; pesan ditempel manual.

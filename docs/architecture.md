@@ -26,7 +26,7 @@ Prinsip pemisahan: web **tidak** menyentuh database atau model secara langsung, 
 
 | Komponen | File | Peran |
 |---|---|---|
-| Web admin | `app/streamlit_app.py` | Dashboard, order baru, daftar order, customer, produk |
+| Web (admin dan pelanggan) | `app/streamlit_app.py` | Tampilan Admin: dashboard, order baru, daftar order, customer, produk. Tampilan Pelanggan: buat pesanan dan lacak pesanan (memakai endpoint `/public/*`) |
 | REST + Inference API | `src/api.py`, `src/schemas.py` | CRUD, alur status, `/classify`, endpoint Generative AI; validasi lewat Pydantic |
 | Database | `src/database.py` | 6 tabel (lihat `docs/db_schema.md`), transisi status terkontrol |
 | Klasifikasi | `src/predictor.py`, `models/final/` | Memuat model beku, mengembalikan label, confidence, `needs_review`, probabilitas |

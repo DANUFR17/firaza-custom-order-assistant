@@ -1,7 +1,7 @@
 # Dokumentasi API
 
 Base URL lokal: `http://127.0.0.1:8000`. Dokumentasi interaktif (Swagger UI) dibuat otomatis oleh FastAPI di **`/docs`** dan **`/redoc`**; spesifikasi OpenAPI di `/openapi.json`.
-MVP ini belum memakai autentikasi (hanya untuk penggunaan lokal oleh admin).
+MVP ini belum memakai autentikasi (sesuai arahan advisor, cukup berjalan lokal). Endpoint `/public/*` untuk pelanggan tidak membutuhkan login dan hanya membuka data minimal; pelacakan dilindungi kode pesanan + nomor telepon, tetapi belum ada pembatasan laju (rate limit).
 
 ## Menjalankan
 ```powershell
@@ -30,6 +30,8 @@ Tanpa `GEMINI_API_KEY`, fitur Generative AI tetap berjalan dengan fallback berba
 | GET | `/orders/{id}/history` | Riwayat perubahan status |
 | POST | `/orders/{id}/items` | Tambah item (produk, jumlah, warna, `custom_text`, font, layout, vendor) |
 | PUT / DELETE | `/orders/{id}/items/{item_id}` | Ubah / hapus item |
+| **POST** | **`/public/orders`** | **Halaman pelanggan**: pelanggan mengirim pesanan sendiri (nama, nomor WhatsApp, pesan, detail opsional). Masuk sebagai order baru, kanal **Website**, status New, dengan usulan AI; jenis final tetap dikonfirmasi admin. Nomor yang sama memakai customer yang sama |
+| **GET** | **`/public/track`** | **Halaman pelanggan**: lacak status dengan `order_code` dan `phone` (9 digit terakhir nomor harus cocok). Hanya mengembalikan status, jenis (bila sudah dikonfirmasi), item, dan riwayat status; tidak membocorkan pesan asli, ringkasan AI, atau catatan internal. Kode atau nomor salah menghasilkan 404 yang sama |
 | POST | `/orders/{id}/summary` | **Generative AI**: structured order summary (`?force=true` untuk membuat ulang) |
 | POST | `/orders/{id}/greeting` | **Generative AI**: draft kartu ucapan, body opsional `{"tone": "hangat\|formal\|islami"}` |
 
@@ -58,4 +60,4 @@ Invoke-RestMethod -Uri "http://127.0.0.1:8000/orders/$($o.id)/status" -Method Po
 `201` dibuat, `204` dihapus, `404` tidak ditemukan, `409` konflik (transisi status tidak valid, SKU ganda, customer masih punya order), `422` validasi gagal (font/layout/kanal tidak dikenal, jumlah < 1), `503` model klasifikasi belum dimuat.
 
 ## Pengujian
-`pytest -q` dari root proyek menjalankan 8 uji otomatis (CRUD, alur order end-to-end, validasi, grounding Gemini, dan fallback). Gemini tidak dipanggil sungguhan dalam uji.
+`pytest -q` dari root proyek menjalankan 14 uji otomatis (CRUD, alur order end-to-end, halaman pelanggan, validasi, grounding Gemini, fallback, dan web). Gemini tidak dipanggil sungguhan dalam uji.

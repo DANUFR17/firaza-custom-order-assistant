@@ -163,3 +163,44 @@ def test_response_text_abaikan_bagian_non_teks():
     resp = NS(candidates=[NS(content=NS(parts=parts))], text="cadangan")
     assert response_text(resp) == "isi jawaban"
     assert response_text(NS(candidates=[], text="cadangan")) == "cadangan"
+
+
+def test_pelanggan_buat_dan_lacak(client):
+    r = client.post("/public/orders", json={"name": "Sinta", "phone": "0812-3456-7890", "message": BRIEF,
+                    "items": [{"quantity": 20, "color": "navy", "custom_text": "Budi & Sarah", "font": "script", "layout": "tengah"}]})
+    assert r.status_code == 201
+    code = r.json()["order_code"]
+    assert r.json()["status"] == "New"
+    o = client.get("/orders").json()[0]
+    assert o["channel"] == "Website" and o["order_type"] is None          # jenis final menunggu konfirmasi admin
+    if client.app.state.classifier is not None:
+        assert o["predicted_type"] == "Custom Sajadah"
+
+    # format nomor berbeda tetap cocok; kode tidak peka huruf besar/kecil
+    t1 = client.get("/public/track", params={"order_code": code.lower(), "phone": "+62 812 3456 7890"})
+    assert t1.status_code == 200
+    body = t1.json()
+    assert body["items"][0]["font"] == "Script" and body["jenis_pesanan"] is None and len(body["riwayat"]) == 1
+    assert "raw_message" not in body and "ai_summary" not in body and "notes" not in body    # tidak membocorkan data internal
+
+    client.put(f"/orders/{o['id']}", json={"order_type": "Custom Sajadah"})
+    client.post(f"/orders/{o['id']}/status", json={"status": "Design/Preparation"})
+    t2 = client.get("/public/track", params={"order_code": code, "phone": "081234567890"}).json()
+    assert t2["jenis_pesanan"] == "Custom Sajadah" and t2["status"] == "Design/Preparation" and len(t2["riwayat"]) == 2
+
+    # nomor salah atau kode salah: pesan sama (tidak membocorkan mana yang salah)
+    for params in ({"order_code": code, "phone": "081200000000"}, {"order_code": "FRZ-9999", "phone": "081234567890"}):
+        assert client.get("/public/track", params=params).status_code == 404
+
+    # nomor yang sama memesan lagi: memakai customer yang sama
+    client.post("/public/orders", json={"name": "Sinta R", "phone": "+6281234567890", "message": "handuk bordir nama Dinda 2 pcs"})
+    assert len(client.get("/customers").json()) == 1 and len(client.get("/orders").json()) == 2
+
+
+def test_pelanggan_validasi(client):
+    ok = {"name": "Sinta", "phone": "081234567890", "message": BRIEF}
+    assert client.post("/public/orders", json={**ok, "phone": "123"}).status_code == 422
+    assert client.post("/public/orders", json={**ok, "message": "hai"}).status_code == 422
+    assert client.post("/public/orders", json={**ok, "items": [{"font": "Comic Sans"}]}).status_code == 422
+    assert client.post("/public/orders", json={**ok, "items": [{"product_id": 9999}]}).status_code == 422
+    assert client.post("/public/orders", json={**ok, "items": [{"quantity": 1}] * 6}).status_code == 422

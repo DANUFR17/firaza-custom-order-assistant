@@ -22,11 +22,10 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
-from sklearn.model_selection import GroupKFold
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 
-from common import LABELS, evaluate, load_data, misclassified, plot_confusion, prep, save_json
+from common import LABELS, evaluate, grouped_folds, load_data, misclassified, plot_confusion, prep, save_json
 from preprocessing import preprocess
 
 
@@ -42,9 +41,10 @@ def candidates():
         yield f"LinearSVC(C={c})", lambda c=c: LinearSVC(C=c, random_state=42)
 
 
-def group_kfold(texts, y, groups, make_clf, k=5):
+def group_kfold(texts, y, groups, make_clf, k=5, repeats=3, seed=42):
+    """Macro F1 rata-rata dan simpangan baku di seluruh lipatan (per template, berulang, deterministik)."""
     scores = []
-    for a, b in GroupKFold(k).split(texts, y, groups):
+    for _, _, a, b in grouped_folds(groups, y, k=k, repeats=repeats, seed=seed):
         pipe = make_pipeline(make_clf()).fit(texts[a], y[a])
         scores.append(f1_score(y[b], pipe.predict(texts[b]), average="macro"))
     return float(np.mean(scores)), float(np.std(scores))
@@ -88,7 +88,7 @@ def main():
     Xall = np.array(prep(full.text))
     gm, gs = group_kfold(Xall, full.label.values, full.template_id.values, best_make)
     metrics["group_kfold_5"] = {"mean": round(gm, 4), "std": round(gs, 4)}
-    print(f"GroupKFold(5) macro F1 = {gm:.3f} +- {gs:.3f}")
+    print(f"Lipatan per template (5 lipatan x 3 ulangan) macro F1 = {gm:.3f} +- {gs:.3f}")
 
     os.makedirs(args.model_dir, exist_ok=True)
     joblib.dump(pipe, os.path.join(args.model_dir, "baseline_tfidf.joblib"))

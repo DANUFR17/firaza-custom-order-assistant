@@ -107,8 +107,13 @@ def page_dashboard():
     cols = st.columns(4)
     for col, s in zip(cols, load_options()["statuses"]):
         col.metric(f"{STATUS_ICON[s]} {s}", sum(1 for o in orders if o["status"] == s))
+    waiting = sum(1 for o in orders if o["predicted_type"] and not o["order_type"])
+    web_orders = sum(1 for o in orders if o["channel"] == "Website")
+    m1, m2 = st.columns(2)
+    m1.metric("🔎 Menunggu konfirmasi jenis order", waiting, help="Order yang sudah diberi usulan AI tetapi belum dikonfirmasi admin")
+    m2.metric("🌐 Order dari halaman pelanggan (Website)", web_orders)
     if not orders:
-        st.info("Belum ada order. Buat di menu **Order Baru**.")
+        st.info("Belum ada order. Buat di menu **Order Baru** atau lewat tampilan **Pelanggan**.")
         return
     _, cname = customers_map()
     left, right = st.columns([1, 2])
@@ -238,18 +243,21 @@ def page_daftar_order():
     pname, pid_name = products_map()
     _, cname = customers_map()
 
-    f1, f2, f3 = st.columns(3)
+    f1, f2, f3, f4 = st.columns([1, 1, 1.2, 1.2])
     status = f1.selectbox("Status", ["Semua"] + opts["statuses"], key="f_status")
     jenis = f2.selectbox("Jenis", ["Semua"] + opts["order_types"], key="f_jenis")
     q = f3.text_input("Cari kode/pesan", key="f_q")
+    only_unconfirmed = f4.checkbox("Hanya yang belum dikonfirmasi", key="f_unconf")
     orders = get("/orders", status=None if status == "Semua" else status, order_type=None if jenis == "Semua" else jenis,
                  q=q, limit=200) or []
+    if only_unconfirmed:
+        orders = [o for o in orders if o["predicted_type"] and not o["order_type"]]
     if not orders:
         st.info("Tidak ada order yang cocok.")
         return
     st.dataframe(pd.DataFrame([{"Kode": o["order_code"], "Customer": cname.get(o["customer_id"], "?"),
                                 "Jenis": o["order_type"] or (f"{o['predicted_type']} (usulan)" if o["predicted_type"] else "-"),
-                                "Status": f"{STATUS_ICON[o['status']]} {o['status']}", "Item": len(o["items"]),
+                                "Status": f"{STATUS_ICON[o['status']]} {o['status']}", "Kanal": o["channel"], "Item": len(o["items"]),
                                 "Tenggat": fmt_dt(o["due_date"]) if o["due_date"] else "-", "Dibuat": fmt_dt(o["created_at"])}
                                for o in orders]), hide_index=True)
 
@@ -447,20 +455,117 @@ def page_produk():
                 st.rerun()
 
 
+# ================================================================== tampilan PELANGGAN (tanpa login)
+CUSTOMER_STATUS = {"New": "Pesanan diterima", "Design/Preparation": "Persiapan dan desain", "Production": "Produksi",
+                   "Completed": "Selesai"}
+
+
+def page_pelanggan_buat():
+    st.header("Buat Pesanan")
+    st.write("Ceritakan pesanan Anda dengan bahasa sehari-hari. Tim Firaza akan menghubungi Anda lewat WhatsApp untuk "
+             "mengonfirmasi detail dan harga.")
+    opts = load_options()
+    pname, _ = products_map()
+    c1, c2 = st.columns(2)
+    name = c1.text_input("Nama Anda", key="pc_name")
+    phone = c2.text_input("Nomor WhatsApp", key="pc_phone", placeholder="0812-3456-7890",
+                          help="Dipakai untuk menghubungi Anda dan untuk melacak pesanan.")
+    msg = st.text_area("Pesanan Anda", key="pc_msg", height=130,
+                       placeholder="Contoh: Mau sajadah navy 20 pcs untuk nikahan, custom nama Budi & Sarah")
+    with st.expander("Detail tambahan (opsional, membantu kami menyiapkan pesanan lebih cepat)"):
+        a, b, c = st.columns(3)
+        prod = a.selectbox("Produk", [""] + list(pname), key="pc_prod")
+        qty = b.number_input("Jumlah", min_value=1, value=1, step=1, key="pc_qty")
+        color = c.text_input("Warna", key="pc_color")
+        text = a.text_input("Nama/teks yang dicetak atau dibordir", key="pc_text")
+        font = b.selectbox("Font", [""] + opts["fonts"], key="pc_font")
+        layout = c.selectbox("Posisi teks", [""] + opts["layouts"], key="pc_layout")
+        has_due = a.checkbox("Ada tanggal dibutuhkan", key="pc_hasdue")
+        due = b.date_input("Dibutuhkan pada", key="pc_due", disabled=not has_due)
+        notes = st.text_input("Catatan", key="pc_notes")
+    if st.button("Kirim Pesanan", type="primary", key="btn_pc_submit"):
+        digits = "".join(ch for ch in phone if ch.isdigit())
+        if len(name.strip()) < 2:
+            st.error("Mohon isi nama Anda.")
+        elif not 8 <= len(digits) <= 15:
+            st.error("Mohon isi nomor WhatsApp yang valid (8-15 digit).")
+        elif len(msg.strip()) < 5:
+            st.error("Mohon ceritakan pesanan Anda (minimal beberapa kata).")
+        else:
+            items = []
+            if prod or text.strip():
+                items.append({"product_id": pname.get(prod) if prod else None, "quantity": int(qty), "color": color or None,
+                              "custom_text": text.strip() or None, "font": font or None, "layout": layout or None})
+            payload = {"name": name.strip(), "phone": phone.strip(), "message": msg.strip(), "notes": notes or None, "items": items}
+            if has_due:
+                payload["due_date"] = due.isoformat()
+            r = call("POST", "/public/orders", json=payload)
+            if r is not None:
+                st.session_state["pc_last"] = r.json()
+    last = st.session_state.get("pc_last")
+    if last:
+        st.success(f"Pesanan Anda diterima. Kode pesanan: **{last['order_code']}**")
+        st.info("Simpan kode ini dan gunakan menu **Lacak Pesanan** (bersama nomor WhatsApp Anda) untuk melihat perkembangannya. "
+                "Jenis pesanan dan harga akan dikonfirmasi oleh tim kami.")
+
+
+def page_pelanggan_lacak():
+    st.header("Lacak Pesanan")
+    st.write("Masukkan kode pesanan dan nomor WhatsApp yang Anda pakai saat memesan.")
+    a, b = st.columns(2)
+    code = a.text_input("Kode pesanan", key="pt_code", placeholder="FRZ-0001")
+    phone = b.text_input("Nomor WhatsApp", key="pt_phone")
+    if st.button("Lacak", type="primary", key="btn_pt_track", disabled=not (code.strip() and phone.strip())):
+        r = call("GET", "/public/track", params={"order_code": code.strip(), "phone": phone.strip()})
+        st.session_state["pt_result"] = r.json() if r is not None else None
+    t = st.session_state.get("pt_result")
+    if not t:
+        return
+    steps = list(CUSTOMER_STATUS)
+    cur = steps.index(t["status"])
+    st.subheader(f"{t['order_code']} · {CUSTOMER_STATUS[t['status']]}")
+    st.markdown("  →  ".join(("✅ " if i < cur or t["status"] == "Completed" else "🔵 " if i == cur else "⚪ ") + CUSTOMER_STATUS[s]
+                              for i, s in enumerate(steps)))
+    st.write(f"**Jenis pesanan:** {t['jenis_pesanan'] or 'menunggu konfirmasi tim Firaza'}  ·  "
+             f"**Dibuat:** {fmt_dt(t['created_at'])}  ·  **Dibutuhkan:** {fmt_dt(t['due_date']) if t['due_date'] else '-'}")
+    if t["items"]:
+        st.dataframe(pd.DataFrame([{"Produk": i["produk"] or "-", "Jumlah": i["jumlah"], "Warna": i["warna"],
+                                    "Nama/teks": i["teks_custom"], "Font": i["font"], "Posisi": i["layout"]} for i in t["items"]]),
+                     hide_index=True)
+    else:
+        st.caption("Detail item belum dicatat; tim kami akan menghubungi Anda untuk melengkapinya.")
+    st.markdown("**Riwayat**")
+    st.dataframe(pd.DataFrame([{"Waktu": fmt_dt(h["waktu"]), "Status": CUSTOMER_STATUS.get(h["status"], h["status"])}
+                               for h in t["riwayat"]]), hide_index=True)
+
+
 # ================================================================== main
 st.set_page_config(page_title="Firaza Custom Order", page_icon="🧵", layout="wide")
 PAGES = {"Dashboard": page_dashboard, "Order Baru": page_order_baru, "Daftar Order": page_daftar_order,
          "Customer": page_customer, "Produk": page_produk}
+CUSTOMER_PAGES = {"Buat Pesanan": page_pelanggan_buat, "Lacak Pesanan": page_pelanggan_lacak}
+
+default_view = 0
+try:                                         # tautan khusus pelanggan: http://localhost:8501/?mode=pelanggan
+    if str(st.query_params.get("mode", "")).lower() in ("pelanggan", "customer", "user"):
+        default_view = 1
+except Exception:
+    pass
 with st.sidebar:
     st.title("🧵 Firaza")
-    st.caption("Custom Order Management")
-    choice = st.radio("Menu", list(PAGES), key="menu", label_visibility="collapsed")
-    try:
-        h = requests.get(API + "/health", timeout=10).json()
-        st.divider()
-        st.caption(f"Model klasifikasi: {'siap ✅' if h['classifier_loaded'] else 'belum dimuat ⚠️'}")
-        st.caption(f"Gemini: {'aktif ✅' if h['gemini_configured'] else 'tidak aktif (memakai fallback)'}")
-    except requests.exceptions.RequestException:
-        st.error(f"API tidak dapat dihubungi di {API}")
-        st.stop()
-PAGES[choice]()
+    view = st.radio("Tampilan", ["Admin", "Pelanggan"], index=default_view, key="view", horizontal=True)
+    if view == "Pelanggan":
+        st.caption("Pesan produk custom")
+        choice = st.radio("Menu", list(CUSTOMER_PAGES), key="menu_pelanggan", label_visibility="collapsed")
+    else:
+        st.caption("Custom Order Management (Admin)")
+        choice = st.radio("Menu", list(PAGES), key="menu", label_visibility="collapsed")
+        try:
+            h = requests.get(API + "/health", timeout=10).json()
+            st.divider()
+            st.caption(f"Model klasifikasi: {'siap ✅' if h['classifier_loaded'] else 'belum dimuat ⚠️'}")
+            st.caption(f"Gemini: {'aktif ✅' if h['gemini_configured'] else 'tidak aktif (memakai fallback)'}")
+        except requests.exceptions.RequestException:
+            st.error(f"API tidak dapat dihubungi di {API}")
+            st.stop()
+(CUSTOMER_PAGES if view == "Pelanggan" else PAGES)[choice]()
