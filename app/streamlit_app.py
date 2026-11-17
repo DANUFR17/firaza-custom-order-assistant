@@ -39,7 +39,8 @@ LAYOUT_ALIGN = {"Tengah": ("center", "center"), "Atas": ("flex-start", "center")
 def call(method, path, ok=(200, 201, 204), **kw):
     """Panggil API. Return Response bila sukses; tampilkan pesan galat dan return None bila gagal."""
     try:
-        r = requests.request(method, API + path, timeout=60, **kw)
+        kw.setdefault("timeout", 60)
+        r = requests.request(method, API + path, **kw)
     except requests.exceptions.RequestException:
         st.error(f"API tidak dapat dihubungi di {API}. Jalankan dulu: `uvicorn api:app --app-dir src --reload`")
         st.stop()
@@ -539,11 +540,39 @@ def page_pelanggan_lacak():
                                for h in t["riwayat"]]), hide_index=True)
 
 
+def page_pelanggan_tanya():
+    st.header("Tanya Firaza")
+    st.write("Tanyakan hal umum seputar pemesanan, produk custom, kartu ucapan, atau status pesanan. "
+             "Jawaban dibuat asisten AI dari panduan Firaza dan menyebut sumbernya.")
+    q = st.text_input("Pertanyaan Anda", key="rag_q", placeholder="Contoh: Bagaimana cara melacak pesanan saya?")
+    if st.button("Tanya", type="primary", key="btn_rag_ask", disabled=len(q.strip()) < 3):
+        r = call("POST", "/rag/ask", json={"question": q.strip()}, timeout=240)
+        st.session_state["rag_res"] = r.json() if r is not None else None
+    res = st.session_state.get("rag_res")
+    if not res:
+        return
+    if res["abstained"]:
+        st.warning(res["jawaban"])
+    else:
+        st.success(res["jawaban"])
+    mode = res["mode"]
+    st.caption("Dijawab oleh model lokal (" + mode.replace("ollama:", "") + ")" if mode.startswith("ollama") else
+               "Dijawab oleh Gemini" if mode == "gemini" else
+               "Menampilkan kutipan panduan (model bahasa tidak tersedia)" if mode == "extractive" else
+               "Tidak ada informasi yang cukup relevan")
+    if res["sumber"]:
+        with st.expander("Sumber jawaban"):
+            for s in res["sumber"]:
+                st.markdown(f"**{s['judul']}** · kemiripan {s['skor']:.2f}")
+                st.caption(s["kutipan"])
+    st.caption("Informasi harga, estimasi waktu, dan kebijakan pasti dikonfirmasi oleh admin Firaza.")
+
+
 # ================================================================== main
 st.set_page_config(page_title="Firaza Custom Order", page_icon="🧵", layout="wide")
 PAGES = {"Dashboard": page_dashboard, "Order Baru": page_order_baru, "Daftar Order": page_daftar_order,
          "Customer": page_customer, "Produk": page_produk}
-CUSTOMER_PAGES = {"Buat Pesanan": page_pelanggan_buat, "Lacak Pesanan": page_pelanggan_lacak}
+CUSTOMER_PAGES = {"Buat Pesanan": page_pelanggan_buat, "Lacak Pesanan": page_pelanggan_lacak, "Tanya Firaza": page_pelanggan_tanya}
 
 default_view = 0
 try:                                         # tautan khusus pelanggan: http://localhost:8501/?mode=pelanggan

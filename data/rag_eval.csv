@@ -1,0 +1,29 @@
+question,expected_ids,in_domain
+Firaza itu jual apa sih?,kb01|kb03,1
+Bisa beli lewat Shopee atau cuma WhatsApp?,kb02,1
+Bedanya produk ready stock sama custom apa?,kb04,1
+Sajadah bisa dicetak nama? butuh info apa saja?,kb05,1
+"Kalau handuk dibordir, prosesnya lewat siapa?",kb06,1
+Isi hampers bisa diatur sendiri?,kb07,1
+Dibuatkan juga kartu ucapannya?,kb08,1
+Kalau pesan ratusan buat souvenir nikahan gimana?,kb09,1
+Alur pesan custom dari awal sampai jadi seperti apa?,kb10,1
+Gimana cara lihat pesanan saya sudah sampai mana?,kb11|kb12,1
+Status Production itu artinya apa?,kb12,1
+Font apa saja yang tersedia dan posisi tulisannya?,kb13,1
+Berapa harga sajadah custom?,kb15,1
+Berapa lama pengerjaan bordir?,kb16,1
+"Mau batalkan pesanan, bisa?",kb17,1
+"Barang yang datang rusak, harus bagaimana?",kb18,1
+Pengiriman pakai ekspedisi apa?,kb19,1
+Saya mau jadi reseller,kb20,1
+Instagram dan website resmi Firaza apa?,kb21,1
+Apakah rekomendasi jenis pesanan dari AI itu final?,kb22,1
+Nama di sajadah harus ditulis bagaimana biar tidak salah cetak?,kb23,1
+Boleh kirim logo perusahaan sendiri?,kb24,1
+Siapa presiden Indonesia sekarang?,,0
+Resep nasi goreng yang enak,,0
+Berapa kurs dolar hari ini?,,0
+Cara install Python di Windows,,0
+Rekomendasi film terbaru,,0
+Bagaimana cuaca Bandung besok?,,0

@@ -1,0 +1,7 @@
+{
+  "embedder": "ollama:bge-m3",
+  "kb_hash": "b82861c86754d3c3",
+  "n": 24,
+  "dim": 1024,
+  "built_at": "2026-11-17 19:32:10"
+}

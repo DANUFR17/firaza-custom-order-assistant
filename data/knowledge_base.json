@@ -1,0 +1,170 @@
+[
+  {
+    "id": "kb01",
+    "judul": "Tentang Firaza",
+    "kategori": "profil",
+    "isi": "Firaza adalah bisnis retail hampers dan personalized gifts. Produk utamanya handuk dan sajadah untuk kebutuhan hampers, pernikahan, dan kado.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb02",
+    "judul": "Kanal pembelian",
+    "kategori": "profil",
+    "isi": "Pembelian dilakukan terutama secara online lewat Shopee, TikTok Shop, dan website. Pesanan partai besar ditangani lewat WhatsApp.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb03",
+    "judul": "Produk utama",
+    "kategori": "produk",
+    "isi": "Kategori produk utama Firaza: hampers handuk, sajadah custom (printing atau bordir), kado pernikahan, dan material packaging.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb04",
+    "judul": "Ready stock dan custom",
+    "kategori": "produk",
+    "isi": "Ready stock adalah produk standar tanpa personalisasi yang bisa langsung dibeli. Custom adalah produk yang diberi nama, tulisan, inisial, atau logo, sehingga perlu detail tambahan dan proses pengerjaan.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb05",
+    "judul": "Sajadah custom",
+    "kategori": "produk",
+    "isi": "Sajadah dapat dipersonalisasi dengan nama atau tulisan lewat printing atau bordir. Informasi yang perlu disiapkan: nama atau teks yang diinginkan, jumlah, warna sajadah, pilihan font, posisi tulisan, dan desain atau logo bila ada.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb06",
+    "judul": "Handuk custom",
+    "kategori": "produk",
+    "isi": "Handuk dapat dibordir dengan nama, inisial, atau logo. Informasi custom diteruskan ke vendor bordir, lalu handuk kembali untuk dipacking dan dikirim.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb07",
+    "judul": "Hampers",
+    "kategori": "produk",
+    "isi": "Hampers adalah paket kado berisi beberapa item, misalnya handuk dan sajadah, dengan kemasan dan bisa disertai kartu ucapan. Isi, jumlah, dan anggaran hampers didiskusikan dengan admin.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb08",
+    "judul": "Kartu ucapan",
+    "kategori": "layanan",
+    "isi": "Draf kartu ucapan dapat dibuat sesuai acara dan nada yang dipilih, misalnya hangat, formal, atau islami. Nama penerima mengikuti yang ditulis pelanggan. Mohon periksa isinya sebelum dicetak.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb09",
+    "judul": "Pesanan partai besar",
+    "kategori": "layanan",
+    "isi": "Untuk pesanan dalam jumlah banyak, misalnya souvenir pernikahan atau hampers kantor, pemesanan dilakukan lewat WhatsApp. Detail jumlah, personalisasi, dan tenggat dikonfirmasi bersama admin.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb10",
+    "judul": "Alur memesan produk custom",
+    "kategori": "proses",
+    "isi": "Alurnya: kirim pesan atau isi form di halaman pelanggan, lalu Anda mendapat kode pesanan. Admin mengonfirmasi jenis dan detail pesanan, kemudian pesanan masuk persiapan dan desain, produksi, dan selesai.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb11",
+    "judul": "Melacak pesanan",
+    "kategori": "proses",
+    "isi": "Gunakan menu Lacak Pesanan di halaman pelanggan. Masukkan kode pesanan dan nomor WhatsApp yang dipakai saat memesan untuk melihat tahap, item, dan riwayat pesanan.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb12",
+    "judul": "Arti status pesanan",
+    "kategori": "proses",
+    "isi": "Pesanan diterima: pesanan sudah masuk dan menunggu konfirmasi admin. Persiapan dan desain: detail dan desain disiapkan. Produksi: barang sedang dikerjakan, termasuk bordir atau printing. Selesai: pesanan telah selesai dikerjakan.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb13",
+    "judul": "Pilihan font dan posisi teks",
+    "kategori": "layanan",
+    "isi": "Pilihan font: Kaligrafi, Script, Arab, Elegan, Klasik, Sans Simple, Bold, dan Handwriting. Pilihan posisi teks: Tengah, Atas, Bawah, Pojok Kanan Bawah, dan Pojok Kiri Atas.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb14",
+    "judul": "Pilihan warna",
+    "kategori": "produk",
+    "isi": "Pelanggan dapat menyebutkan warna yang diinginkan saat memesan. Ketersediaan warna tertentu dikonfirmasi oleh admin.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb15",
+    "judul": "Harga",
+    "kategori": "umum",
+    "isi": "Harga bergantung pada jenis produk, jumlah, dan tingkat personalisasi. Harga pasti diinformasikan dan dikonfirmasi oleh admin; informasi harga tidak ditampilkan di asisten ini.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb16",
+    "judul": "Estimasi waktu pengerjaan",
+    "kategori": "umum",
+    "isi": "Lama pengerjaan bergantung pada jumlah dan jenis personalisasi, misalnya printing atau bordir lewat vendor. Cantumkan tanggal dibutuhkan saat memesan; estimasi pasti diberikan oleh admin.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb17",
+    "judul": "Mengubah atau membatalkan pesanan",
+    "kategori": "umum",
+    "isi": "Hubungi admin secepatnya dengan menyebut kode pesanan. Kemungkinan perubahan atau pembatalan tergantung tahap pesanan, dan kebijakan resminya dikonfirmasi oleh admin.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb18",
+    "judul": "Barang bermasalah atau komplain",
+    "kategori": "umum",
+    "isi": "Bila barang bermasalah, hubungi admin dengan kode pesanan dan keterangan masalahnya, sebaiknya disertai foto. Komplain ditangani oleh admin dan bukan merupakan pemesanan baru.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb19",
+    "judul": "Pengiriman",
+    "kategori": "umum",
+    "isi": "Pesanan dikirim setelah selesai dipacking. Pilihan ekspedisi dan ongkos kirim dikonfirmasi oleh admin.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb20",
+    "judul": "Reseller dan kerja sama",
+    "kategori": "umum",
+    "isi": "Untuk menjadi reseller atau menjalin kerja sama, hubungi admin Firaza lewat WhatsApp atau Instagram resmi.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb21",
+    "judul": "Kontak resmi",
+    "kategori": "profil",
+    "isi": "Situs web Firaza: firaza.com. Instagram resmi: @firaza.official.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb22",
+    "judul": "Rekomendasi jenis pesanan oleh AI",
+    "kategori": "sistem",
+    "isi": "Sistem memberi usulan jenis pesanan (ready stock, custom sajadah, custom handuk, hampers, atau lainnya) secara otomatis. Usulan ini hanya saran; jenis akhir selalu dikonfirmasi oleh admin.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb23",
+    "judul": "Menulis nama atau teks custom",
+    "kategori": "layanan",
+    "isi": "Tulis nama atau teks persis seperti yang diinginkan, termasuk ejaan, huruf besar dan kecil, dan tanda seperti &. Yang dicetak atau dibordir mengikuti tulisan yang dicatat, jadi periksa ejaannya sebelum mengirim.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  },
+  {
+    "id": "kb24",
+    "judul": "Logo atau desain sendiri",
+    "kategori": "layanan",
+    "isi": "Pelanggan boleh mengirim logo atau desain sendiri. Admin akan memeriksa kecocokannya untuk printing atau bordir dan menghubungi Anda bila ada penyesuaian.",
+    "sumber": "Contoh sintetis berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi)"
+  }
+]

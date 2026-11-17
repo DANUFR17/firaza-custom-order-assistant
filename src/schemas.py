@@ -327,3 +327,26 @@ class TrackOut(BaseModel):
     created_at: datetime
     items: List[TrackItem]
     riwayat: List[TrackHistory]
+
+
+# ------------------------------------------------------------------ RAG (Tanya Firaza)
+class RagAskRequest(BaseModel):
+    question: str = Field(..., min_length=3, max_length=500, examples=["Bagaimana cara melacak pesanan saya?"])
+    top_k: int = Field(3, ge=1, le=5)
+    llm: Optional[Literal["ollama", "gemini", "extractive"]] = Field(None, description="Ganti backend generasi untuk satu pertanyaan")
+
+
+class RagSource(BaseModel):
+    id: str
+    judul: str
+    kategori: str
+    skor: float
+    kutipan: str
+
+
+class RagAnswer(BaseModel):
+    jawaban: str
+    mode: str
+    abstained: bool
+    sumber: List[RagSource]
+    peringatan: List[str] = []

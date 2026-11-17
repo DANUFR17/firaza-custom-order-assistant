@@ -31,6 +31,17 @@ Daftar ini dilengkapi seiring pengerjaan. Versi diambil dari lingkungan pengemba
 Versi paket di atas diambil dari `pip freeze` (isi setelah semuanya terpasang di venv).
 Bila RAG dikerjakan, tambahkan vector database dan model embedding yang dipilih.
 
+## RAG (Side Quest)
+
+| Komponen | Referensi |
+|---|---|
+| Konsep RAG | Lewis, P. dkk. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. *NeurIPS 33*. |
+| Model embedding BGE-M3 | Chen, J. dkk. (2024). BGE M3-Embedding: Multi-Lingual, Multi-Functionality, Multi-Granularity Text Embeddings Through Self-Knowledge Distillation. arXiv:2402.03216. Model: https://huggingface.co/BAAI/bge-m3 |
+| FAISS | Johnson, J., Douze, M., & Jégou, H. (2019). Billion-scale similarity search with GPUs. *IEEE Transactions on Big Data*, 7(3). https://github.com/facebookresearch/faiss |
+| Qwen2.5 (model generation lokal) | Qwen Team (2024). Qwen2.5 Technical Report. arXiv:2412.15115. Model: https://huggingface.co/Qwen |
+| Ollama (penjalan model lokal) | https://ollama.com |
+| Basis pengetahuan | Contoh sintetis dibuat sendiri berdasarkan brief Use Case 2 Firaza (bukan FAQ resmi) |
+
 ## Data
 
 - **Dataset pesan customer:** sintetis, dibuat sendiri dengan `src/generate_dataset.py` (template dan slot berbahasa Indonesia). Tidak memakai data asli Firaza.

@@ -30,6 +30,8 @@ Tanpa `GEMINI_API_KEY`, fitur Generative AI tetap berjalan dengan fallback berba
 | GET | `/orders/{id}/history` | Riwayat perubahan status |
 | POST | `/orders/{id}/items` | Tambah item (produk, jumlah, warna, `custom_text`, font, layout, vendor) |
 | PUT / DELETE | `/orders/{id}/items/{item_id}` | Ubah / hapus item |
+| GET | `/rag/status` | Status RAG: jumlah dokumen, model embedding, backend indeks, model bahasa, ambang skor |
+| **POST** | **`/rag/ask`** | **RAG**: `{question, top_k, llm}` → jawaban berbasis basis pengetahuan, daftar sumber, `mode` (`ollama:...`, `gemini`, `extractive`, `abstain`). 503 bila Ollama tidak berjalan |
 | **POST** | **`/public/orders`** | **Halaman pelanggan**: pelanggan mengirim pesanan sendiri (nama, nomor WhatsApp, pesan, detail opsional). Masuk sebagai order baru, kanal **Website**, status New, dengan usulan AI; jenis final tetap dikonfirmasi admin. Nomor yang sama memakai customer yang sama |
 | **GET** | **`/public/track`** | **Halaman pelanggan**: lacak status dengan `order_code` dan `phone` (9 digit terakhir nomor harus cocok). Hanya mengembalikan status, jenis (bila sudah dikonfirmasi), item, dan riwayat status; tidak membocorkan pesan asli, ringkasan AI, atau catatan internal. Kode atau nomor salah menghasilkan 404 yang sama |
 | POST | `/orders/{id}/summary` | **Generative AI**: structured order summary (`?force=true` untuk membuat ulang) |

@@ -31,6 +31,7 @@ Prinsip pemisahan: web **tidak** menyentuh database atau model secara langsung, 
 | Database | `src/database.py` | 6 tabel (lihat `docs/db_schema.md`), transisi status terkontrol |
 | Klasifikasi | `src/predictor.py`, `models/final/` | Memuat model beku, mengembalikan label, confidence, `needs_review`, probabilitas |
 | Preprocessing | `src/preprocessing.py` | Normalisasi teks sebelum model (lihat `docs/model.md`) |
+| RAG (Tanya Firaza) | `src/rag_service.py`, `data/knowledge_base.json` | Embedding bge-m3 (Ollama) + indeks FAISS + Qwen2.5-3B lokal; menolak menjawab bila tidak ada dasar (lihat `docs/rag.md`) |
 | Generative AI | `src/genai_service.py` | Structured summary dan kartu ucapan via Gemini, dengan validasi dan fallback (lihat `docs/prompts.md`) |
 
 ## 3. Alur data satu order

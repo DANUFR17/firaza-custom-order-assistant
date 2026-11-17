@@ -19,6 +19,9 @@ BRIEF = "Mau sajadah navy 20 pcs untuk nikahan, custom nama Budi & Sarah"
 @pytest.fixture
 def client(tmp_path, monkeypatch):
     monkeypatch.setenv("FIRAZA_DB", str(tmp_path / "test.db"))
+    monkeypatch.setenv("RAG_EMBED_BACKEND", "hash")
+    monkeypatch.setenv("RAG_LLM_BACKEND", "extractive")
+    monkeypatch.setenv("RAG_INDEX_DIR", str(tmp_path / "rag"))
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
     with TestClient(api_module.app) as c:

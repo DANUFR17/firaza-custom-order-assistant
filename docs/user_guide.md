@@ -62,6 +62,8 @@ Di sidebar pilih **Tampilan: Pelanggan** (atau buka `http://localhost:8501/?mode
 1. **Buat Pesanan:** pelanggan mengisi nama, nomor WhatsApp, dan menceritakan pesanannya; detail tambahan (produk, jumlah, warna, nama/teks, font, posisi, tanggal dibutuhkan) opsional. Setelah **Kirim Pesanan**, muncul **kode pesanan** (mis. `FRZ-0001`).
 2. **Lacak Pesanan:** pelanggan memasukkan kode dan nomor WhatsApp yang sama untuk melihat tahap pesanan (Pesanan diterima → Persiapan dan desain → Produksi → Selesai), item, dan riwayat.
 
+3. **Tanya Firaza:** pelanggan mengetik pertanyaan umum (cara memesan, produk custom, status pesanan). Jawaban dibuat asisten AI dari panduan Firaza dan disertai sumber (buka *Sumber jawaban*). Bila tidak ada informasi yang cukup relevan, sistem menyarankan menghubungi admin. Perlu **Ollama berjalan** di komputer admin.
+
 **Di sisi admin:** order dari pelanggan muncul di **Daftar Order** dengan kanal **Website**, sudah diberi usulan AI tetapi **jenis finalnya menunggu konfirmasi admin**. Dashboard menampilkan jumlah order yang menunggu konfirmasi, dan di Daftar Order ada filter **Hanya yang belum dikonfirmasi**. Pelanggan yang memesan lagi dengan nomor yang sama otomatis dikenali sebagai customer yang sama.
 
 **[Gambar: halaman Buat Pesanan (pelanggan), halaman Lacak Pesanan, dan Daftar Order dengan filter belum dikonfirmasi]**

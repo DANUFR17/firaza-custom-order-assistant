@@ -1,0 +1,30 @@
+{
+  "embedding": "ollama:bge-m3",
+  "indeks": "faiss",
+  "n_dalam_domain": 22,
+  "n_luar_domain": 6,
+  "hit@1": 0.909,
+  "hit@3": 0.955,
+  "mrr": 0.932,
+  "skor_teratas_dalam_domain": {
+    "min": 0.53,
+    "rata2": 0.664
+  },
+  "skor_teratas_luar_domain": {
+    "maks": 0.408,
+    "rata2": 0.369
+  },
+  "ambang_saat_ini": 0.45,
+  "ditolak_benar_luar_domain": 1.0,
+  "ditolak_salah_dalam_domain": 0.0,
+  "ambang_disarankan": 0.469,
+  "gagal_hit@3": [
+    {
+      "pertanyaan": "Berapa harga sajadah custom?",
+      "diharapkan": [
+        "kb15"
+      ],
+      "teratas": "kb05"
+    }
+  ]
+}

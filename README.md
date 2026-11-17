@@ -19,7 +19,7 @@ serta pelacakan status New → Design/Preparation → Production → Completed.
 | Web (Streamlit) | Selesai: tampilan Admin (dashboard, order, customer, produk) dan tampilan Pelanggan (buat dan lacak pesanan) |
 | Dokumentasi (arsitektur, model, API, prompt, skema DB, panduan) dan sitasi | Draf lengkap; tangkapan layar menunggu |
 | Demo | Berikutnya |
-| RAG (opsional) | Diputuskan belakangan |
+| RAG (Side Quest): bge-m3 + FAISS + Qwen2.5-3B lokal (Ollama), menu Tanya Firaza | Selesai dan teruji: hit@3 0,955, MRR 0,932 pada 28 pertanyaan uji (`python src/eval_rag.py`); detail di `docs/rag.md` |
 
 ## Struktur
 
@@ -59,7 +59,7 @@ pytest -q                                     # uji otomatis API dan web
 
 Fitur Gemini membutuhkan `GEMINI_API_KEY` di `.env` (lihat `.env.example`); tanpa key, ringkasan dan kartu ucapan memakai fallback berbasis aturan.
 Fitur Gemini diuji dengan key sungguhan pada 6 November 2026 memakai model `gemini-3.1-flash-lite` (structured summary menghasilkan JSON valid, `sumber: gemini`). Nama model dapat diganti lewat `GEMINI_MODEL` bila daftar model Google berubah; cek dengan `python src/genai_service.py --check`.
-Dokumentasi: `docs/architecture.md`, `docs/model.md`, `docs/api.md`, `docs/prompts.md`, `docs/db_schema.md`, `docs/label_guideline.md`, `docs/user_guide.md`.
+Dokumentasi: `docs/architecture.md`, `docs/model.md`, `docs/api.md`, `docs/prompts.md`, `docs/db_schema.md`, `docs/label_guideline.md`, `docs/user_guide.md`, `docs/rag.md`.
 
 ## Pendekatan model
 

@@ -21,6 +21,9 @@ PAGES = ["Dashboard", "Order Baru", "Daftar Order", "Customer", "Produk"]
 @pytest.fixture
 def app(tmp_path, monkeypatch):
     monkeypatch.setenv("FIRAZA_DB", str(tmp_path / "web.db"))
+    monkeypatch.setenv("RAG_EMBED_BACKEND", "hash")
+    monkeypatch.setenv("RAG_LLM_BACKEND", "extractive")
+    monkeypatch.setenv("RAG_INDEX_DIR", str(tmp_path / "rag"))
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
     monkeypatch.setenv("API_URL", BASE)
@@ -118,3 +121,15 @@ def test_halaman_pelanggan(app):
     assert app.metric[5].value == "1"                                            # 1 order dari kanal Website
     if app.client.app.state.classifier is not None:
         assert app.metric[4].value == "1"                                        # menunggu konfirmasi jenis
+
+
+def test_tanya_firaza_di_web(app):
+    app.run()
+    app.sidebar.radio(key="view").set_value("Pelanggan").run()
+    app.sidebar.radio(key="menu_pelanggan").set_value("Tanya Firaza").run()
+    assert not app.exception, [e.value for e in app.exception]
+    app.text_input(key="rag_q").set_value("Bagaimana cara melacak pesanan saya?").run()
+    app.button(key="btn_rag_ask").click().run()
+    assert not app.exception
+    res = app.session_state["rag_res"]
+    assert res["sumber"] and not res["abstained"]

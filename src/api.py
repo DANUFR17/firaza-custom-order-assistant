@@ -38,6 +38,13 @@ async def lifespan(app: FastAPI):
     seed(app.state.engine)
     app.state.db_path = db_path
     app.state.genai = GenAIService()
+    app.state.rag, app.state.rag_error = None, None
+    try:
+        from rag_service import RagService
+
+        app.state.rag = RagService()
+    except Exception as e:  # basis pengetahuan tidak ada, dsb.: API tetap hidup, /rag/* memberi 503
+        app.state.rag_error = f"{type(e).__name__}: {e}"
     app.state.classifier, app.state.classifier_error = None, None
     try:
         from predictor import OrderClassifier
@@ -407,3 +414,26 @@ def public_track(order_code: str = Query(..., min_length=3, max_length=20), phon
             "items": [{"produk": it.product.name if it.product else None, "jumlah": it.quantity, "warna": it.color,
                        "teks_custom": it.custom_text, "font": it.font, "layout": it.layout} for it in order.items],
             "riwayat": [{"status": h.to_status, "waktu": h.changed_at} for h in order.history]}
+
+
+# ================================================================== RAG: Tanya Firaza
+def rag_or_503(request: Request):
+    if request.app.state.rag is None:
+        raise HTTPException(503, f"Layanan RAG belum siap ({request.app.state.rag_error})")
+    return request.app.state.rag
+
+
+@app.get("/rag/status", tags=["RAG"], summary="Status layanan RAG (indeks, model embedding, model bahasa)")
+def rag_status(request: Request):
+    return rag_or_503(request).status()
+
+
+@app.post("/rag/ask", response_model=S.RagAnswer, tags=["RAG"],
+          summary="Tanya Firaza: jawaban berbasis basis pengetahuan (retrieval + generation), disertai sumber")
+def rag_ask(payload: S.RagAskRequest, request: Request):
+    from rag_service import RagUnavailable
+
+    try:
+        return rag_or_503(request).ask(payload.question, k=payload.top_k, llm=payload.llm)
+    except RagUnavailable as e:
+        raise HTTPException(503, str(e))
