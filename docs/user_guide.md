@@ -1,6 +1,6 @@
 # Panduan Penggunaan: Firaza Custom Order Assistant
 
-Panduan ini untuk admin yang mengelola custom order. Tangkapan layar (`docs/img/`) ditambahkan oleh penulis setelah aplikasi dijalankan; letaknya ditandai **[Gambar: ...]**.
+Panduan ini untuk admin yang mengelola custom order. Tangkapan layar (`docs/images/`) ditambahkan oleh penulis setelah aplikasi dijalankan; letaknya ditandai **[Gambar: ...]**.
 
 ## 1. Menjalankan aplikasi
 
@@ -15,7 +15,7 @@ streamlit run app/streamlit_app.py            # terminal 2: web (http://localhos
 
 Di sidebar web terlihat status **Model klasifikasi** dan **Gemini**. Bila Gemini tidak aktif, ringkasan dan kartu ucapan tetap dibuat dengan fallback berbasis aturan (ditandai "Fallback"). Untuk mengaktifkan Gemini, isi `GEMINI_API_KEY` di file `.env` (contoh: `.env.example`), lalu restart API.
 
-**[Gambar: sidebar menu dan status]**
+![Dashboard Firaza](<images\Dashboard_Main.png>)
 
 ## 2. Alur kerja harian
 
@@ -26,7 +26,7 @@ Di sidebar web terlihat status **Model klasifikasi** dan **Gemini**. Bila Gemini
 4. **Item pesanan:** isi tabel (produk, jumlah, warna, nama/teks custom, font, layout). Tambah baris dengan tombol **+** di bawah tabel. Catat nama dengan teliti, karena nama inilah yang dipakai untuk ringkasan, kartu ucapan, dan produksi.
 5. Klik **Simpan Order**. Order mendapat kode (mis. `FRZ-0001`) dengan status **New**.
 
-**[Gambar: halaman Order Baru setelah analisis AI]**
+![Order Baru](<images\order-baru.png>)
 
 ### b. Mengelola order (menu **Daftar Order**)
 Gunakan filter status, jenis, atau pencarian, lalu pilih order. Tiap order punya enam tab:
@@ -40,7 +40,7 @@ Gunakan filter status, jenis, atau pencarian, lalu pilih order. Tiap order punya
 | **Status & Riwayat** | Pindahkan status dengan tombol (hanya langkah yang sah), tambahkan catatan, lihat riwayat |
 | **Edit / Hapus** | Ubah jenis final dan catatan; hapus order (perlu centang konfirmasi) |
 
-**[Gambar: tab Ringkasan AI dan tab Status & Riwayat]**
+![Daftar Order](<images\daftar_order.png>)
 
 Catat item **sebelum** membuat ringkasan: nama dan jumlah yang ditampilkan diambil dari item yang kamu catat, bukan ditebak AI.
 
@@ -66,7 +66,10 @@ Di sidebar pilih **Tampilan: Pelanggan** (atau buka `http://localhost:8501/?mode
 
 **Di sisi admin:** order dari pelanggan muncul di **Daftar Order** dengan kanal **Website**, sudah diberi usulan AI tetapi **jenis finalnya menunggu konfirmasi admin**. Dashboard menampilkan jumlah order yang menunggu konfirmasi, dan di Daftar Order ada filter **Hanya yang belum dikonfirmasi**. Pelanggan yang memesan lagi dengan nomor yang sama otomatis dikenali sebagai customer yang sama.
 
-**[Gambar: halaman Buat Pesanan (pelanggan), halaman Lacak Pesanan, dan Daftar Order dengan filter belum dikonfirmasi]**
+
+![Buat Pesenan](<images\buat-pesenan.png>)
+![Lacak Pesenan](<images\lacak-pesenan.png>)
+
 
 ## 3. Cara membaca hasil AI
 
